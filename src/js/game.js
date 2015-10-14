@@ -14,6 +14,7 @@
         {
             BubbleShoot.CurrenteState = this;
             BubbleShoot.state = 'stated';
+            BubbleShoot.finishedByServer = false;
 
             this.game.stage.disableVisibilityChange = true;
             // var background = this.game.add.tileSprite(0, 0, BubbleShoot.UI.width, BubbleShoot.UI.height, "background");
@@ -84,6 +85,8 @@
                 });
 
                 BubbleShoot.server.on('finish', function(winnerID) {
+
+                    BubbleShoot.finishedByServer = true;
 
                     console.log('finish: ', winnerID);
                     if (winnerID == BubbleShoot.player.id) {
@@ -213,7 +216,9 @@
             console.log('game has finished', winner.id);
 
             if (this.isMultiplayer()) {
-                BubbleShoot.server.emit(BubbleShoot.room, winner.id);
+                if (!BubbleShoot.finishedByServer) {
+                    BubbleShoot.server.emit(BubbleShoot.room, winner.id);
+                }
             } else {
                 BubbleShoot.computer.stop();
             }
