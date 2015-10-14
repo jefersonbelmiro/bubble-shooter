@@ -73,6 +73,7 @@
 
             if (BubbleShoot.mode == BubbleShoot.MODES.MULTIPLAYER) {
                 
+                var _this = this;
                 BubbleShoot.server.removeAllListeners();
                 BubbleShoot.server.on('player-fire', function(data) {
 
@@ -80,6 +81,16 @@
                     BubbleShoot.enemy.shooter._nextLoaded.push(data.tag);
                     BubbleShoot.enemy.shooter.angle = 180 - data.angle;
                     BubbleShoot.enemy.fire();
+                });
+
+                BubbleShoot.server.on('finish', function(winnerID) {
+
+                    console.log('finish: ', winnerID);
+                    if (winnerID == BubbleShoot.player.id) {
+                        _this.finish(BubbleShoot.player);
+                    } else {
+                        _this.finish(BubbleShoot.enemy);
+                    }
                 });
 
                 // @todo - change player/enemy to p1/p2
@@ -201,7 +212,9 @@
 
             console.log('game has finished', winner.id);
 
-            if (BubbleShoot.mode == BubbleShoot.MODES.SINGLEPLAYER) {
+            if (this.isMultiplayer()) {
+                BubbleShoot.server.emit(BubbleShoot.room, winner.id);
+            } else {
                 BubbleShoot.computer.stop();
             }
 

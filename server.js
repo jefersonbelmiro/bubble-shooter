@@ -151,6 +151,20 @@ io.on('connection', function(socket) {
         done(tag);
     });
 
+    socket.on('finish', function(room, winnerID) {
+
+        var p1 = room.players[0];
+        var p2 = room.players[1];
+        var client;
+
+        if (p1.id == winnerID) {
+            client = clients[clientsByPlayer[p2.id]];
+        } else {
+            client = clients[clientsByPlayer[p1.id]];
+        }
+        client.emit('finish', winnerID);
+    });
+
     socket.on('play', function(room, done) {
 
         var p1 = room.players[0];
