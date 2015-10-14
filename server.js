@@ -153,6 +153,7 @@ io.on('connection', function(socket) {
 
     socket.on('finish', function(room, winnerID) {
 
+        console.log('finish', room, winnerID);
         var p1 = room.players[0];
         var p2 = room.players[1];
         var client;

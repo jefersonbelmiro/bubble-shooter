@@ -90,9 +90,9 @@
 
                     console.log('finish: ', winnerID);
                     if (winnerID == BubbleShoot.player.id) {
-                        _this.finish(BubbleShoot.player);
+                        // _this.finish(BubbleShoot.player);
                     } else {
-                        _this.finish(BubbleShoot.enemy);
+                        // _this.finish(BubbleShoot.enemy);
                     }
                 });
 
