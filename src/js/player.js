@@ -1,4 +1,6 @@
-;(function(exports) { function Player(id, side) {
+;(function(exports) { 
+
+    function Player(id, side) {
 
         this.id = id;
         this.side = side;

@@ -7,7 +7,7 @@
     {
         this.socket = null;
         this.events = {};
-        this.host = '127.0.0.1';
+        this.host = '104.131.181.48'; //'127.0.0.1';
         this.port = 3000;
         this.path = 'http://'+this.host+':'+this.port;
     }
