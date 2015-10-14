@@ -12,6 +12,8 @@
 
         create: function() 
         {
+            this.game.stage.disableVisibilityChange = true;
+
             delete this.room;
             BubbleShoot.server.removeAllListeners();
 

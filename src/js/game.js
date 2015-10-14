@@ -217,7 +217,21 @@
 
             if (this.isMultiplayer()) {
                 if (!BubbleShoot.finishedByServer) {
-                    BubbleShoot.server.emit('finish', {room: BubbleShoot.room, winnerID: winner.id});
+                    // BubbleShoot.finishedByServer = true;
+                    var room = BubbleShoot.room;
+                    var data = {
+                        winnerID: winner.id,
+                        room: {
+                            id : room.id,
+                            players: [
+                                { id: room.players[0].id},
+                                { id: room.players[1].id},
+                            ],
+                            state: room.state,
+                        }, 
+                    };
+                    console.log('BubbleShoot.server.emit(finish)', data);
+                    BubbleShoot.server.emit('finish', data);
                 }
             } else {
                 BubbleShoot.computer.stop();

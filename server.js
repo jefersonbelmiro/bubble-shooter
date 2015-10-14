@@ -151,12 +151,13 @@ io.on('connection', function(socket) {
         done(tag);
     });
 
-    socket.on('game-finish', function(data) {
+    socket.on('finish', function(data) {
 
         console.log('game-finish', data);
         var p1 = data.room.players[0];
         var p2 = data.room.players[1];
         var client;
+        console.log(' - game-finish', p1, p2);
 
         if (p1.id == data.winnerID) {
             client = clients[clientsByPlayer[p2.id]];
@@ -164,6 +165,7 @@ io.on('connection', function(socket) {
             client = clients[clientsByPlayer[p1.id]];
         }
         client.emit('finish', data.winnerID);
+        removeRoom(data.room.id);
     });
 
     socket.on('play', function(room, done) {
