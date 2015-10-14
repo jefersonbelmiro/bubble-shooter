@@ -19,9 +19,9 @@
                 label: 'SINGLE-PLAYER', 
                 position: {x : this.game.world.centerX, y: textName.y + textName.height + 100}, 
                 callback : function() {
-                    if (!Phaser.Device.desktop) {
-                        this.startFullScreen();
-                    }
+                    // if (!Phaser.Device.desktop) {
+                    //     this.startFullScreen();
+                    // }
                     BubbleShoot.mode = BubbleShoot.MODES.SINGLEPLAYER;
                     this.state.start('game'); 
                 }, 
@@ -32,9 +32,9 @@
                 label: 'MULTIPLAYER', 
                 position: {x : this.game.world.centerX, y: singlePlayerButton.y + singlePlayerButton.height + 20}, 
                 callback: function() {
-                    if (!Phaser.Device.desktop) {
-                        this.startFullScreen();
-                    }
+                    // if (!Phaser.Device.desktop) {
+                    //     this.startFullScreen();
+                    // }
                     this.getNickName();
                     BubbleShoot.mode = BubbleShoot.MODES.MULTIPLAYER;
                     this.state.start('room'); 
