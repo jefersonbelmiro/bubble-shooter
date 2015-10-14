@@ -163,7 +163,7 @@ io.on('connection', function(socket) {
         } else {
             client = clients[clientsByPlayer[p1.id]];
         }
-        client.emit('finish', winnerID);
+        // client.emit('finish', winnerID);
     });
 
     socket.on('play', function(room, done) {
