@@ -151,19 +151,19 @@ io.on('connection', function(socket) {
         done(tag);
     });
 
-    socket.on('finish', function(room, winnerID) {
+    socket.on('game-finish', function(data) {
 
-        console.log('finish', room, winnerID);
-        var p1 = room.players[0];
-        var p2 = room.players[1];
+        console.log('game-finish', data);
+        var p1 = data.room.players[0];
+        var p2 = data.room.players[1];
         var client;
 
-        if (p1.id == winnerID) {
+        if (p1.id == data.winnerID) {
             client = clients[clientsByPlayer[p2.id]];
         } else {
             client = clients[clientsByPlayer[p1.id]];
         }
-        // client.emit('finish', winnerID);
+        client.emit('finish', data.winnerID);
     });
 
     socket.on('play', function(room, done) {

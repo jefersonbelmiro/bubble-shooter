@@ -217,7 +217,7 @@
 
             if (this.isMultiplayer()) {
                 if (!BubbleShoot.finishedByServer) {
-                    BubbleShoot.server.emit(BubbleShoot.room, winner.id);
+                    BubbleShoot.server.emit('finish', {room: BubbleShoot.room, winnerID: winner.id});
                 }
             } else {
                 BubbleShoot.computer.stop();
