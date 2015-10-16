@@ -80,7 +80,7 @@
 
                     console.log('on: player-fire', data.tag);
                     BubbleShoot.enemy.shooter._nextLoaded.push(data.tag);
-                    BubbleShoot.enemy.shooter.angle = 180 - data.angle;
+                    BubbleShoot.enemy.shooter.rotation = Utils.degreesToRadians(180) - data.rotation;
                     BubbleShoot.enemy.fire();
                 });
 
@@ -183,7 +183,7 @@
             if (this.isMultiplayer()) {
                 var data = {
                     playerId : BubbleShoot.player.id,
-                    angle : BubbleShoot.player.shooter.angle,
+                    rotation : BubbleShoot.player.shooter.rotation,
                 }
                 BubbleShoot.server.emit('player-fire', data, function(tag) {
                     BubbleShoot.player.shooter._nextLoaded.push(tag);
