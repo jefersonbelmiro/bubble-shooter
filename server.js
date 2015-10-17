@@ -94,12 +94,14 @@ io.on('connection', function(socket) {
         for (var i = 0, len = rooms.length; i < len; i++) {
 
             var room = rooms[i];
-            var p1 = room.players[0];
-            var p2 = room.players[1];
 
             if (!room) {
                 continue;
             }
+
+            var p1 = room.players[0];
+            var p2 = room.players[1];
+
 
             if (p1.id == playerId) {
                 if (p2) {

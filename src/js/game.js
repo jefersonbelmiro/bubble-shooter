@@ -64,7 +64,7 @@
                 BubbleShoot.enemy.board.createGrid(maxRows, maxCols);
                 BubbleShoot.enemy.board.createBubbles();
                 BubbleShoot.enemy.shooter.reload(true);
-                BubbleShoot.computer = new BubbleShoot.AI(BubbleShoot.enemy);
+                // BubbleShoot.computer = new BubbleShoot.AI(BubbleShoot.enemy);
 
                 BubbleShoot.player.enemy = BubbleShoot.enemy;
                 BubbleShoot.enemy.enemy = BubbleShoot.player;
@@ -202,6 +202,8 @@
 
             BubbleShoot.player.shooter.setRotation(rotation);
             BubbleShoot.player.shooter.showTrajectory();
+
+            BubbleShoot.enemy.shooter.rotation = Utils.degreesToRadians(180) - BubbleShoot.player.shooter.rotation;
         },
 
         finish: function(winner) 

@@ -16,7 +16,7 @@
         this.anchor.setTo(0.5, 0.75);
 
         if (player.side == BubbleShoot.PLAYER_SIDE_TOP) {
-            this.angle = 179;
+            this.rotation = Utils.degreesToRadians(180);
             this.y = this.height/4;
         }
 
