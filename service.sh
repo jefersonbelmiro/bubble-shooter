@@ -1,18 +1,17 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 case "$1" in
     start)
         /usr/bin/nodejs server.js 2>&1 >> /tmp/server.log &
-        echo 'server start'
+        echo -e "\n - server start\n"
         exit 1
         ;;
     stop)
         /usr/bin/pkill -f 'nodejs server.js'
-        echo 'server stop'
+        echo -e "\n - server stop\n"
         exit 1
         ;;
 esac
 
-
-echo "use start or stop options"
-exit 1
+echo -e "\n - use start or stop options\n"
+exit 2
