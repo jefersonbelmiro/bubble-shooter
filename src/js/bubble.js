@@ -58,9 +58,14 @@
 
     Bubble.prototype.fixGridByPosition = function(position) 
     {
+
         var grid = this.getGridByPosition(position);
         this.row = grid.row;
         this.col = grid.col;
+
+        if (this.player == BubbleShoot.enemy) {
+            console.log('bubble.fixGridByPosition', position, grid);
+        } 
     } 
 
     Bubble.prototype.getPositionByGrid = function(grid) 
