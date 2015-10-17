@@ -203,7 +203,7 @@
             BubbleShoot.player.shooter.setRotation(rotation);
             BubbleShoot.player.shooter.showTrajectory();
 
-            BubbleShoot.enemy.shooter.rotation = Utils.degreesToRadians(180) - BubbleShoot.player.shooter.rotation;
+            // BubbleShoot.enemy.shooter.rotation = Utils.degreesToRadians(180) - BubbleShoot.player.shooter.rotation;
         },
 
         finish: function(winner) 
