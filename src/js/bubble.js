@@ -31,10 +31,10 @@
         var position = position || this.position;
         var separatorHeight = BubbleShoot.UI.board.separatorHeight + 1;
 
-        var row = Math.floor( (position.y - board.y) / BubbleShoot.UI.board.rowHeight);
+        var row = Math.floor( (position.y - board.y + separatorHeight) / BubbleShoot.UI.board.rowHeight);
 
         if (topSide) {
-            var row = Math.floor( (board.height - position.y) / BubbleShoot.UI.board.rowHeight);
+            var row = Math.floor( (board.height - position.y - separatorHeight) / BubbleShoot.UI.board.rowHeight);
         }
 
         var marginLeft = row % 2 == 0 ? BubbleShoot.UI.bubble.radius : BubbleShoot.UI.bubble.radius * 2; 
@@ -62,10 +62,6 @@
         var grid = this.getGridByPosition(position);
         this.row = grid.row;
         this.col = grid.col;
-
-        if (this.player == BubbleShoot.enemy) {
-            console.log('bubble.fixGridByPosition', position, grid);
-        } 
     } 
 
     Bubble.prototype.getPositionByGrid = function(grid) 

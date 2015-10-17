@@ -14,7 +14,7 @@
         BUBBLE_STATE_FIRING : 3,
         BUBBLE_STATE_POPPING : 4,
 
-        debug : true,
+        debug : false,
         Service : {},
     }; 
 
