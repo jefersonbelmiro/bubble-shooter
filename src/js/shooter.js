@@ -83,6 +83,11 @@
         this._loaded = false;
 
         var nextTag = nextTag || this._nextLoaded.shift();
+
+        if (!nextTag) {
+            return false;
+        }
+
         var bubble = BubbleShoot.Bubble.create(this.player, undefined, undefined, nextTag);
 
         bubble.anchor.setTo(0.5)

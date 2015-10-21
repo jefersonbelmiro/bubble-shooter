@@ -196,7 +196,6 @@
                 var bubbleTag = BubbleShoot.Bubble.getRandomSprite();
                 BubbleShoot.player.shooter._nextLoaded.push(bubbleTag); 
 
-
                 // BubbleShoot.enemy.shooter._nextLoaded.push(bubbleTag); 
                 // BubbleShoot.enemy.fire();
             }
