@@ -178,10 +178,10 @@ io.on('connection', function(socket) {
         var maxCols = 8;
 
         p1.grid = createGrid(maxRows, maxCols);
-        p1.bubbles = createBubbles(2);
+        p1.bubbles = createBubbles(3);
 
         p2.grid = createGrid(maxRows, maxCols);
-        p2.bubbles = createBubbles(2);
+        p2.bubbles = createBubbles(3);
 
         var p2Client = clients[clientsByPlayer[p2.id]];
 
