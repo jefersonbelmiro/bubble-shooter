@@ -149,8 +149,12 @@ io.on('connection', function(socket) {
             client = clients[clientsByPlayer[p1.id]];
         }
 
+        if (!client) {
+            return done('Client not found');
+        }
+
         client.emit('player-fire', {angle: data.angle, tag: tag});
-        done(tag);
+        done(false, tag);
     });
 
     socket.on('finish', function(data) {

@@ -199,7 +199,12 @@
                     angle : BubbleShoot.player.shooter.angle,
                 }
                 console.log('inputUp', data.angle);
-                BubbleShoot.server.emit('player-fire', data, function(tag) {
+                BubbleShoot.server.emit('player-fire', data, function(error, tag) {
+
+                    if (error) {
+                        return console.error('error: ' . error);
+                    }
+
                     BubbleShoot.player.shooter.load(tag);
                     console.log('emit: player-fire', tag);
                 });
