@@ -62,11 +62,28 @@
 
             if (this.side == BubbleShoot.PLAYER_SIDE_TOP) {
                 this.y = 0;
+
+                var limitLine = BubbleShoot.entities.create(
+                    0, this.player.shooter.y + this.player.shooter.height/2, 
+                    Utils.createRect(BubbleShoot.UI.board.width, BubbleShoot.UI.board.separatorHeight, 'red')
+                );
             }
 
             if (this.side == BubbleShoot.PLAYER_SIDE_BOTTOM) {
+
                 this.y = this.height + separatorHeight;
+
+                // fix shooter position
+                this.player.shooter.y = this.y + this.height - this.player.shooter.y;
+
+                var limitLine = BubbleShoot.entities.create(
+                    0, this.player.shooter.y - this.player.shooter.height/2, 
+                    Utils.createRect(BubbleShoot.UI.board.width, BubbleShoot.UI.board.separatorHeight, 'red')
+                );
             } 
+
+            this.player.shooter.bringToTop();
+            limitLine.alpha = 0.1; 
 
             var grid = this.grid.slice(0);
             this.grid = [];
@@ -79,10 +96,6 @@
                     bubble.fixPositionByGrid();
                     this.grid[row][col] = bubble;
                 }
-            }
-
-            if (this.side == BubbleShoot.PLAYER_SIDE_BOTTOM) {
-                this.player.shooter.y = this.y + this.height - this.player.shooter.y;
             }
         },
 

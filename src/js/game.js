@@ -67,6 +67,9 @@
                 BubbleShoot.player.board.create();
                 BubbleShoot.enemy.board.create();
 
+                BubbleShoot.player.shooter.load(BubbleShoot.Bubble.getRandomSprite());
+                BubbleShoot.enemy.shooter.load(BubbleShoot.Bubble.getRandomSprite());
+
                 var bubbleTag = null;//BubbleShoot.Bubble.getRandomSprite();
                 BubbleShoot.player.shooter.reload(true, bubbleTag);
                 BubbleShoot.enemy.shooter.reload(true, bubbleTag);
@@ -86,7 +89,7 @@
                 BubbleShoot.server.on('player-fire', function(data) {
 
                     console.log('on: player-fire', data.tag);
-                    BubbleShoot.enemy.shooter._nextLoaded.push(data.tag);
+                    BubbleShoot.enemy.shooter.load(data.tag);
                     BubbleShoot.enemy.shooter.angle = 180 - data.angle;
                     BubbleShoot.enemy.fire();
                 });
@@ -116,8 +119,8 @@
                     BubbleShoot.player.board.setGrid(p2.grid);
                     BubbleShoot.enemy.board.setGrid(p1.grid);
 
-                    BubbleShoot.player.shooter._nextLoaded = p2.bubbles;
-                    BubbleShoot.enemy.shooter._nextLoaded = p1.bubbles;
+                    BubbleShoot.player.shooter.load(p2.bubbles);
+                    BubbleShoot.enemy.shooter.load(p1.bubbles);
 
                 } else {
                 
@@ -127,8 +130,8 @@
                     BubbleShoot.player.board.setGrid(p1.grid);
                     BubbleShoot.enemy.board.setGrid(p2.grid);
 
-                    BubbleShoot.player.shooter._nextLoaded = p1.bubbles;
-                    BubbleShoot.enemy.shooter._nextLoaded = p2.bubbles;
+                    BubbleShoot.player.shooter.load(p1.bubbles);
+                    BubbleShoot.enemy.shooter.load(p2.bubbles);
                 } 
 
                 BubbleShoot.player.board.create();
@@ -188,15 +191,15 @@
                     angle : BubbleShoot.player.shooter.angle,
                 }
                 BubbleShoot.server.emit('player-fire', data, function(tag) {
-                    BubbleShoot.player.shooter._nextLoaded.push(tag);
+                    BubbleShoot.player.shooter.load(tag);
                     console.log('emit: player-fire', tag);
                 });
             } else {
 
                 var bubbleTag = BubbleShoot.Bubble.getRandomSprite();
-                BubbleShoot.player.shooter._nextLoaded.push(bubbleTag); 
+                BubbleShoot.player.shooter.load(bubbleTag); 
 
-                // BubbleShoot.enemy.shooter._nextLoaded.push(bubbleTag); 
+                // BubbleShoot.enemy.shooter.load(bubbleTag); 
                 // BubbleShoot.enemy.fire();
             }
 

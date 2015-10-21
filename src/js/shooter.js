@@ -10,7 +10,7 @@
 
         this._loaded = false;
         this._loading = false;
-        this._nextLoaded = []; 
+        this._queue = []; 
 
         this.scale.setTo(0.3);
         this.anchor.setTo(0.5, 0.75);
@@ -73,6 +73,19 @@
         context.stroke();
     };
 
+    Shooter.prototype.load = function(tag)
+    {
+        if (Array.isArray(tag)) {
+            return this._queue = tag;
+        }
+        this._queue.push(tag);
+    }
+
+    Shooter.prototype.getNextTag = function()
+    {
+        return this._queue.shift();
+    }
+
     Shooter.prototype.reload = function(force, nextTag) {
 
         if (this.bubble || this._loading) {
@@ -82,7 +95,7 @@
         this._loading = true;
         this._loaded = false;
 
-        var nextTag = nextTag || this._nextLoaded.shift();
+        var nextTag = nextTag || this.getNextTag();
 
         if (!nextTag) {
             return false;
