@@ -18,6 +18,10 @@
         this.anchor.setTo(0.5);
         this.row = row;
         this.col = col;
+
+        // this.height = BubbleShoot.UI.bubble.size;
+        // this.width = BubbleShoot.UI.bubble.size;
+
         this.radius = BubbleShoot.UI.bubble.radius;
     }
 
@@ -29,12 +33,11 @@
         var topSide = this.player.side == BubbleShoot.PLAYER_SIDE_TOP; 
         var board = this.player.board;
         var position = position || this.position;
-        var separatorHeight = BubbleShoot.UI.board.separatorHeight + 1;
 
-        var row = Math.floor( (position.y - board.y + separatorHeight) / BubbleShoot.UI.board.rowHeight);
+        var row = Math.floor( (position.y - board.y) / BubbleShoot.UI.board.rowHeight);
 
         if (topSide) {
-            var row = Math.floor( (board.height - position.y - separatorHeight) / BubbleShoot.UI.board.rowHeight);
+            var row = Math.floor( (board.height - position.y) / BubbleShoot.UI.board.rowHeight);
         }
 
         var marginLeft = row % 2 == 0 ? BubbleShoot.UI.bubble.radius : BubbleShoot.UI.bubble.radius * 2; 
@@ -58,7 +61,6 @@
 
     Bubble.prototype.fixGridByPosition = function(position) 
     {
-
         var grid = this.getGridByPosition(position);
         this.row = grid.row;
         this.col = grid.col;
@@ -74,9 +76,8 @@
         }
 
         var topSide = this.player.side == BubbleShoot.PLAYER_SIDE_TOP;
-        var separatorHeight = BubbleShoot.UI.board.separatorHeight + 1;
         var x = this.player.board.x;
-        var y = this.player.board.height + BubbleShoot.UI.bubble.radius;
+        var y = this.player.board.y; 
 
         if (grid.row % 2 == 0) {
             x += BubbleShoot.UI.bubble.radius;
@@ -85,9 +86,12 @@
         }
 
         if (topSide) {
-            y -= ((grid.row +1) * BubbleShoot.UI.board.rowHeight) + separatorHeight;
+            y += this.player.board.height;
+            y -= ((grid.row) * BubbleShoot.UI.board.rowHeight);
+            y -= BubbleShoot.UI.bubble.radius;
         } else {
-            y += (grid.row * BubbleShoot.UI.board.rowHeight) + (separatorHeight*1.5);
+            y += (grid.row  * BubbleShoot.UI.board.rowHeight);
+            y += BubbleShoot.UI.bubble.radius;
         }                                      
 
         return { x : x + (grid.col * BubbleShoot.UI.bubble.size), y : y};

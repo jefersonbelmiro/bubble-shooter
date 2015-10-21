@@ -15,14 +15,14 @@
         this.scale.setTo(0.3);
         this.anchor.setTo(0.5, 0.75);
 
+        this.y = this.height/4;
+
         if (player.side == BubbleShoot.PLAYER_SIDE_TOP) {
             this.rotation = Utils.degreesToRadians(180);
-            this.y = this.height/4;
         }
 
         if (player.side == BubbleShoot.PLAYER_SIDE_BOTTOM) {
             this.angle = 0;
-            this.y = BubbleShoot.game.height - this.height/4;
         }
     }
 
@@ -37,7 +37,7 @@
             return false;
         }
 
-        var trajectory = trajectory || BubbleShoot.Collision.trajectory(this.position, this.rotation, this.player.board);
+        var trajectory = trajectory || BubbleShoot.Collision.trajectory(this.position, Utils.degreesToRadians(this.angle), this.player.board);
         bubble.move(trajectory, done);
         this.bubble = null; 
     };
@@ -82,7 +82,8 @@
         this._loading = true;
         this._loaded = false;
 
-        var bubble = BubbleShoot.Bubble.create(this.player, undefined, undefined, this._nextLoaded.shift());
+        var nextTag = nextTag || this._nextLoaded.shift();
+        var bubble = BubbleShoot.Bubble.create(this.player, undefined, undefined, nextTag);
 
         bubble.anchor.setTo(0.5)
         bubble.position.set(this.x, this.y);

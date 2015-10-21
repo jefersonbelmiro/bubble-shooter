@@ -22,15 +22,20 @@
             this.maxCols = this.grid[0].length;
         },
 
+        getGrid : function()
+        {
+            return this.grid;
+        },
+
         createGrid: function(maxRows, maxCols)
         {
             this.maxRows = maxRows;
             this.maxCols = maxCols;
-            this.grid = [];
+            var grid = [];
 
             for(var row = 0; row < this.maxRows; row++) {
 
-                this.grid[row] = [];
+                grid[row] = [];
                 var mod = row % 2 === 0;
 
                 for (var col = 0; col < this.maxCols; col++) {
@@ -40,35 +45,44 @@
                         continue;
                     } 
 
-                    this.grid[row][col] = BubbleShoot.Bubble.getRandomSprite();
+                    grid[row][col] = BubbleShoot.Bubble.getRandomSprite();
                 }
             }
+            return grid;
         },
 
-        createBubbles : function() 
+        create: function() 
         {
-            var separetorHeight = BubbleShoot.UI.board.separatorHeight + 1;
+            var separatorHeight = BubbleShoot.UI.board.separatorHeight;
 
-            this.height = BubbleShoot.UI.board.height - separetorHeight;
+            this.height = BubbleShoot.UI.board.height - separatorHeight;
             this.width = BubbleShoot.UI.bubble.size * this.maxCols;
 
             this.x = BubbleShoot.UI.board.width - this.width;
-
-            if (this.side == BubbleShoot.PLAYER_SIDE_BOTTOM) {
-                this.y = this.height;
-            }
 
             if (this.side == BubbleShoot.PLAYER_SIDE_TOP) {
                 this.y = 0;
             }
 
-            for (var row = 0, rows = this.grid.length; row < rows; row++) {
-                for (var col = 0, cols = this.grid[row].length; col < cols; col++) {
-                    var tag = this.grid[row][col];
+            if (this.side == BubbleShoot.PLAYER_SIDE_BOTTOM) {
+                this.y = this.height + separatorHeight;
+            } 
+
+            var grid = this.grid.slice(0);
+            this.grid = [];
+
+            for (var row = 0, rows = grid.length; row < rows; row++) {
+                this.grid[row] = [];
+                for (var col = 0, cols = grid[row].length; col < cols; col++) {
+                    var tag = grid[row][col];
                     var bubble = BubbleShoot.Bubble.create(this.player, row, col, tag);
                     bubble.fixPositionByGrid();
                     this.grid[row][col] = bubble;
                 }
+            }
+
+            if (this.side == BubbleShoot.PLAYER_SIDE_BOTTOM) {
+                this.player.shooter.y = this.y + this.height - this.player.shooter.y;
             }
         },
 

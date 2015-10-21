@@ -32,11 +32,11 @@
             BubbleShoot.entities.add(bubblesGroup);
             BubbleShoot.entities.bubbles = bubblesGroup;
 
-            var separator = BubbleShoot.entities.create(
+            BubbleShoot.separator = BubbleShoot.entities.create(
                 0, BubbleShoot.game.world.centerY, 
                 Utils.createRect(BubbleShoot.UI.board.width, BubbleShoot.UI.board.separatorHeight)
             );
-            separator.anchor.setTo(0, 0.5);
+            BubbleShoot.separator.anchor.setTo(0, 0.5);
 
             this.createPlayers(function() {
                 this.configureCollision();
@@ -57,13 +57,20 @@
                 var maxRows = Math.round(BubbleShoot.UI.maxRows/3) + 1; 
                 var maxCols = BubbleShoot.UI.maxCols; 
 
-                BubbleShoot.player.board.createGrid(maxRows, maxCols);
-                BubbleShoot.player.board.createBubbles();
-                BubbleShoot.player.shooter.reload(true);
+                // var playerGrid = BubbleShoot.player.board.createGrid(maxRows, maxCols).slice(0);
+                // BubbleShoot.player.board.setGrid(playerGrid.slice(0));
+                // BubbleShoot.enemy.board.setGrid(playerGrid.slice(0));
 
-                BubbleShoot.enemy.board.createGrid(maxRows, maxCols);
-                BubbleShoot.enemy.board.createBubbles();
-                BubbleShoot.enemy.shooter.reload(true);
+                BubbleShoot.player.board.setGrid(BubbleShoot.player.board.createGrid(maxRows, maxCols));
+                BubbleShoot.enemy.board.setGrid(BubbleShoot.enemy.board.createGrid(maxRows, maxCols));
+
+                BubbleShoot.player.board.create();
+                BubbleShoot.enemy.board.create();
+
+                var bubbleTag = null;//BubbleShoot.Bubble.getRandomSprite();
+                BubbleShoot.player.shooter.reload(true, bubbleTag);
+                BubbleShoot.enemy.shooter.reload(true, bubbleTag);
+
                 BubbleShoot.computer = new BubbleShoot.AI(BubbleShoot.enemy);
 
                 BubbleShoot.player.enemy = BubbleShoot.enemy;
@@ -80,7 +87,7 @@
 
                     console.log('on: player-fire', data.tag);
                     BubbleShoot.enemy.shooter._nextLoaded.push(data.tag);
-                    BubbleShoot.enemy.shooter.rotation = Utils.degreesToRadians(180) - data.rotation;
+                    BubbleShoot.enemy.shooter.angle = 180 - data.angle;
                     BubbleShoot.enemy.fire();
                 });
 
@@ -124,11 +131,8 @@
                     BubbleShoot.enemy.shooter._nextLoaded = p2.bubbles;
                 } 
 
-                console.log('createPlayers-p1.bubbles', p1.bubbles);
-                console.log('createPlayers-p2.bubbles', p2.bubbles);
-
-                BubbleShoot.player.board.createBubbles();
-                BubbleShoot.enemy.board.createBubbles();
+                BubbleShoot.player.board.create();
+                BubbleShoot.enemy.board.create();
 
                 BubbleShoot.player.shooter.reload(true);
                 BubbleShoot.enemy.shooter.reload(true);
@@ -178,20 +182,26 @@
 
         inputUp : function(input, event) 
         {
-            BubbleShoot.player.fire();
-
             if (this.isMultiplayer()) {
                 var data = {
                     playerId : BubbleShoot.player.id,
-                    rotation : BubbleShoot.player.shooter.rotation,
+                    angle : BubbleShoot.player.shooter.angle,
                 }
                 BubbleShoot.server.emit('player-fire', data, function(tag) {
                     BubbleShoot.player.shooter._nextLoaded.push(tag);
                     console.log('emit: player-fire', tag);
                 });
             } else {
-                BubbleShoot.player.shooter._nextLoaded.push(BubbleShoot.Bubble.getRandomSprite()); 
+
+                var bubbleTag = BubbleShoot.Bubble.getRandomSprite();
+                BubbleShoot.player.shooter._nextLoaded.push(bubbleTag); 
+
+
+                // BubbleShoot.enemy.shooter._nextLoaded.push(bubbleTag); 
+                // BubbleShoot.enemy.fire();
             }
+
+            BubbleShoot.player.fire();
         }, 
 
         inputMove : function(input, x, y, fromClick) 
@@ -202,6 +212,8 @@
 
             BubbleShoot.player.shooter.setRotation(rotation);
             BubbleShoot.player.shooter.showTrajectory();
+
+            // BubbleShoot.enemy.shooter.angle = 180 - BubbleShoot.player.shooter.angle; 
         },
 
         finish: function(winner) 

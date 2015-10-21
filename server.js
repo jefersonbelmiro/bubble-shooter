@@ -149,7 +149,7 @@ io.on('connection', function(socket) {
             client = clients[clientsByPlayer[p1.id]];
         }
 
-        client.emit('player-fire', {rotation: data.rotation, tag: tag});
+        client.emit('player-fire', {angle: data.angle, tag: tag});
         done(tag);
     });
 
