@@ -198,6 +198,11 @@
                     playerId : BubbleShoot.player.id,
                     angle : BubbleShoot.player.shooter.angle,
                 }
+
+                if (!BubbleShoot.player.shooter.bubble) {
+                    return false;
+                }
+
                 console.log('inputUp', data.angle);
                 BubbleShoot.server.emit('player-fire', data, function(error, tag) {
 
