@@ -218,9 +218,9 @@ io.on('connection', function(socket) {
         if (data.player.id == p1.id) {
             if (p2) {
                 clients[clientsByPlayer[p2.id]].emit('host-close-room');
+                delete roomByPlayer[p2.id];
             }
             delete roomByPlayer[p1.id];
-            delete roomByPlayer[p2.id];
             removeRoom(data.room);
             return done(false);
         }
