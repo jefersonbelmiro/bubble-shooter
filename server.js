@@ -184,6 +184,12 @@ io.on('connection', function(socket) {
         p2.bubbles = createBubbles(2);
 
         var p2Client = clients[clientsByPlayer[p2.id]];
+
+        if (false == p2Client) {
+            console.log('play - error', p1, p2);
+            return done('player 2 client not found', room);
+        }
+
         p2Client.emit('play', room);
 
         console.log('play', p1.bubbles, p2.bubbles);
@@ -209,7 +215,7 @@ io.on('connection', function(socket) {
 
         console.log('  - leave-room', data, room, clientsByPlayer);
 
-        if (data.player.id == room.host.id) {
+        if (data.player.id == p1.id) {
             if (p2) {
                 clients[clientsByPlayer[p2.id]].emit('host-close-room');
             }
