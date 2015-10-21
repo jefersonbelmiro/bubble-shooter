@@ -64,6 +64,10 @@
         var grid = this.getGridByPosition(position);
         this.row = grid.row;
         this.col = grid.col;
+
+        if (BubbleShoot.debug) {
+            console.log('fixGridByPosition', this.player.id, position, grid);
+        }
     } 
 
     Bubble.prototype.getPositionByGrid = function(grid) 
@@ -87,10 +91,10 @@
 
         if (topSide) {
             y += this.player.board.height;
-            y -= ((grid.row) * BubbleShoot.UI.board.rowHeight);
+            y -= grid.row * BubbleShoot.UI.board.rowHeight;
             y -= BubbleShoot.UI.bubble.radius;
         } else {
-            y += (grid.row  * BubbleShoot.UI.board.rowHeight);
+            y += grid.row  * BubbleShoot.UI.board.rowHeight;
             y += BubbleShoot.UI.bubble.radius;
         }                                      
 
@@ -166,7 +170,7 @@
         }
 
         if (!this.debugText) {
-            var style = { font: "50px Arial", fill: "#ffffff" };  
+            var style = { font: "50px Arial", fill: "#000" };  
             var text = BubbleShoot.game.add.text(0, 0, '', style);
             text.anchor.setTo(0.5);
             this.addChild(text);

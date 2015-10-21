@@ -53,7 +53,7 @@
 
         create: function() 
         {
-            var separatorHeight = BubbleShoot.UI.board.separatorHeight;
+            var separatorHeight = 0;//BubbleShoot.UI.board.separatorHeight/2;
 
             this.height = BubbleShoot.UI.board.height - separatorHeight;
             this.width = BubbleShoot.UI.bubble.size * this.maxCols;
