@@ -62,9 +62,10 @@
         }
         var connect = function()
         {
-            this.socket = io(this.path);
-            var connected = this.socket.connect(); 
-            if (!connected) {
+            this.socket = io(this.path, {port: this.port});
+            // var connected = this.socket.connect(); 
+            this.socket = this.socket.connect(this.path);
+            if (!this.socket) {
                 return done('error connecting to the server');
             }
             done();
