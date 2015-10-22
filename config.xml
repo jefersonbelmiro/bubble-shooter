@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<widget id="com.belmiro.bubbleshooter" version="0.0.3" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
+<widget id="com.belmiro.bubbleshooter" version="0.0.4" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
     <name>Bubble Shooter</name>
     <description>
         bubble shooter game
@@ -8,6 +8,7 @@
         bubble shooter team
     </author>
     <gap:plugin name="org.crosswalk.engine" version="1.3.0" />
+    <gap:plugin name="org.apache.cordova.splashscreen" />
     <content src="index.html" />
     <access origin="*" />
     <preference name="orientation" value="portrait" />
