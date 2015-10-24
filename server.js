@@ -1,7 +1,7 @@
 var path = require('path');
 var app = require('express')();
 var http = require('http').Server(app);
-var io = require('socket.io')(http);
+var io = require('socket.io')(http, {origins: '*:*'});
 var REQUEST_PATH = path.dirname(__dirname);
 
 var clients = {};
@@ -80,7 +80,7 @@ function createBubbles(len)
     return bubbles;
 }
 
-io.set('origins', '*:*');
+// io.set('origins', '*:*');
 
 io.on('connection', function(socket) {
 
