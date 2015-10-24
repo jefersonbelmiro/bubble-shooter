@@ -10,7 +10,7 @@ var playersByClient = {};
 var rooms = [];
 var roomByPlayer = {};
 
-var PORT = 80;
+var PORT = 8080;
 var TAGS = ['green', 'blue', 'yellow', 'red', 'magenta', 'orange'];
 var STATE_CREATED = 'created';
 var STATE_PLAYING = 'playing';
