@@ -1,6 +1,6 @@
 var path = require('path');
 var app = require('express')();
-var http = require('http').Server(app);
+var http = require('http').createServer(app);
 var io = require('socket.io')(http, {origins: '*:*'});
 var REQUEST_PATH = path.dirname(__dirname);
 
@@ -10,6 +10,7 @@ var playersByClient = {};
 var rooms = [];
 var roomByPlayer = {};
 
+var PORT = 8080;
 var TAGS = ['green', 'blue', 'yellow', 'red', 'magenta', 'orange'];
 var STATE_CREATED = 'created';
 var STATE_PLAYING = 'playing';
@@ -80,7 +81,19 @@ function createBubbles(len)
     return bubbles;
 }
 
-// io.set('origins', '*:*');
+io.set('origins', '*:*');
+
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Cache-Control, Pragma, Origin, Authorization, Content-Type, X-Requested-With");
+    res.header("Access-Control-Allow-Methods", "GET, PUT, POST");
+    if ('OPTIONS' === req.method) {
+        res.status(204).send();
+    }
+    else {
+        next();
+    }
+});
 
 io.on('connection', function(socket) {
 
@@ -284,6 +297,6 @@ io.on('connection', function(socket) {
 
 });
 
-http.listen(8888, function() {
+http.listen(PORT, function() {
     console.log('listening on 8888');
 });

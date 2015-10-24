@@ -9,7 +9,7 @@
         this.events = {};
         this.host = '104.131.181.48';
         // this.host = '127.0.0.1';
-        this.port = 8888;
+        this.port = 8080;
         this.path = 'http://'+this.host+':'+this.port;
     }
 
