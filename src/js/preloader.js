@@ -20,7 +20,6 @@
 
             this.load.atlasJSONHash('sprites', 'src/img/sprites.png', 'src/json/sprites.json');
             this.load.atlasJSONHash('sprites2', 'src/img/sprites2.png', 'src/json/sprites2.json');
-            this.load.image("background", "src/img/background.jpg");
 
             this.load.bitmapFont('font', 'src/img/font.png', 'src/xml/font.xml');
         },

@@ -17,8 +17,6 @@
             BubbleShoot.finishedByServer = false;
 
             this.game.stage.disableVisibilityChange = true;
-            // var background = this.game.add.tileSprite(0, 0, BubbleShoot.UI.width, BubbleShoot.UI.height, "background");
-            // background.alpha = 0.8;
 
             this.game.time.advancedTiming = true;
             fpsText = this.game.add.text(0, 5, '00', {font: '16px Arial', fill: '#ccc'});
