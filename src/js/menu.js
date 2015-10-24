@@ -46,7 +46,8 @@
         getNickName : function()
         {
             // BubbleShoot.nickname = localStorage.getItem('nickname') || prompt('your nickname:');
-            BubbleShoot.nickname = Utils.removeAccents(prompt('your nickname:'));
+            // BubbleShoot.nickname = Utils.removeAccents(prompt('your nickname:'));
+            BubbleShoot.nickname = 'player-' + Math.round(Math.random() * 99999) + 1;
             localStorage.setItem('nickname', BubbleShoot.nickname);
         },
 
