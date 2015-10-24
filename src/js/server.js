@@ -95,6 +95,7 @@
         var head = document.getElementsByTagName('head')[0];
         var node = document.createElement('script');
         node.addEventListener('load', function() {
+            alert('script has loaded');
             done(false);
         });
         node.addEventListener('error', function() {
