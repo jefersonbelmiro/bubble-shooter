@@ -80,6 +80,8 @@ function createBubbles(len)
     return bubbles;
 }
 
+io.set('origins', '*:*');
+
 io.on('connection', function(socket) {
 
     clients[socket.id] = socket;
