@@ -13,10 +13,10 @@
     <!-- <access origin=".*" uri=".*" subdomains="true" /> -->
     <access origin="*" />
 
-    <!-- <gap:plugin name="com.indigoway.cordova.whitelist.whitelistplugin" version="1.1.1" /> -->
-    <!-- <allow&#45;navigation href="http://*/*" /> -->
-    <!-- <allow&#45;navigation href="https://*/*" /> -->
-    <!-- <allow&#45;navigation href="data:*" /> -->
+    <gap:plugin name="com.indigoway.cordova.whitelist.whitelistplugin" version="1.1.1" />
+    <allow-navigation href="http://*/*" />
+    <allow-navigation href="https://*/*" />
+    <allow-navigation href="data:*" />
 
     <preference name="SplashScreen" value="splash.png"/>
     <preference name="SplashScreenDelay" value="10000"/>
@@ -31,7 +31,7 @@
     <icon src="icon.png" />
     <gap:splash src="splash.png" />
 
-    <!-- <gap:plugin name="org.crosswalk.engine" version="1.3.0" /> -->
+    <gap:plugin name="org.crosswalk.engine" version="1.3.0" />
     <gap:plugin name="org.apache.cordova.splashscreen" />
 
     <icon src="res/icon/android/icon-36-ldpi.png"   gap:platform="android" gap:qualifier="ldpi" />
