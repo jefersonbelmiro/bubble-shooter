@@ -21,9 +21,33 @@
     if (this.document) {
 
         var container = document.createElement('pre');
-        container.id = 'debug-container';
-        container.style.width = window.innerWidth +'px';
+        container.id = 'debug-container'; container.style.width = window.innerWidth +'px';
         document.body.appendChild(container);
+
+        var debug = function(message) {
+        
+            if (container.innerHTML != '') {
+                container.innerHTML += '<br />';
+            }
+
+            container.innerHTML += message;
+        }
+
+        var builtin = window.console.error;
+        window.console.error = function() 
+        {
+            var args = Array.prototype.slice.call(arguments);
+            builtin.apply(window.console, args);
+
+            var message = '<hr />';
+
+            args.forEach(function(error) {
+                message += ' - ' + error + '<br />';
+            });
+
+            message += '<hr />';
+            debug(message);
+        }
 
         window.addEventListener('error', function(event) {
 
@@ -36,12 +60,8 @@
                 stack: error.stack,
             }
 
-            if (container.innerHTML != '') {
-                container.innerHTML += '<br />';
-            }
-
-            container.innerHTML += '<span style="color:red;">' + message + '</span><br />';
-            container.innerHTML += ' on ' + data.file + ':' + data.line + '<br />';
+            debug('<span style="color:red;">' + message + '</span><br />');
+            debug(' on ' + data.file + ':' + data.line + '<br />');
         });
     }
 

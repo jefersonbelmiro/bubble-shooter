@@ -63,9 +63,11 @@
         var connect = function()
         {
             this.socket = io(this.path, {port: this.port});
-            // var connected = this.socket.connect(); 
             this.socket = this.socket.connect(this.path);
             if (!this.socket) {
+                console.error('path', this.path, this.port);
+                console.error('io', io);
+                console.error('sockect', this.socket);
                 return done('error connecting to the server');
             }
             done();
@@ -96,6 +98,7 @@
             done(false);
         });
         node.addEventListener('error', function() {
+            console.error('erro ao carregar script');
             done('Error');
         });
         node.src = this.path + '/socket.io/socket.io.js';
