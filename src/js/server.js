@@ -92,7 +92,6 @@
 
     Server.prototype.requireSocketLibray = function(done)
     {
-        return done(false);
         var head = document.getElementsByTagName('head')[0];
         var node = document.createElement('script');
         node.addEventListener('load', function() {
