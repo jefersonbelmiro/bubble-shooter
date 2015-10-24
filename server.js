@@ -298,5 +298,5 @@ io.on('connection', function(socket) {
 });
 
 http.listen(PORT, function() {
-    console.log('listening on 8888');
+    console.log('listening on ' + PORT);
 });
