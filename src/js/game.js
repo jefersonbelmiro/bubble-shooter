@@ -97,6 +97,10 @@
 
                     BubbleShoot._queue.enemy.push(data);
 
+                    if (!data.tag || !data.load) {
+                        console.error('player-fire wrong data', data);
+                    }
+
                     console.log('on: player-fire', data.tag, data.angle);
                     BubbleShoot.enemy.shooter.bubble.frameName = data.tag;
                     BubbleShoot.enemy.shooter.bubble.tag = data.tag;
