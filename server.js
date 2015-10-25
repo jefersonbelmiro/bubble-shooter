@@ -218,7 +218,7 @@ io.on('connection', function(socket) {
 
         var p2Client = clients[clientsByPlayer[p2.id]];
 
-        if (false == p2Client) {
+        if (!p2Client) {
             console.error('play - error', p1, p2);
             return done('player 2 client not found', room);
         }
