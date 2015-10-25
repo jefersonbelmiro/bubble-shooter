@@ -117,17 +117,25 @@ io.on('connection', function(socket) {
             var p1 = room.players[0];
             var p2 = room.players[1];
 
-
             if (p1.id == playerId) {
                 if (p2) {
-                    clients[clientsByPlayer[p2.id]].emit('host-close-room');
+                    var p2Client = clients[clientsByPlayer[p2.id]];
+                    
+                    if (p2Client) {
+                        p2Client.emit('host-close-room');
+                    }
                 }
                 removeRoom(room.id);
+                break;
             }
 
             if (p2 && p2.id == playerId) {
                 room.players.pop();
-                clients[clientsByPlayer[p1.id]].emit('player-leave-room', room);
+                var p1Client = clients[clientsByPlayer[p1.id]];
+                if (p1Client) {
+                    p1Client.emit('player-leave-room', room);
+                }
+                break;
             } 
         }
 
