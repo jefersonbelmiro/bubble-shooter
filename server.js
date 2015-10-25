@@ -173,6 +173,9 @@ io.on('connection', function(socket) {
         }
 
         if (!client) {
+            console.error('client not found');
+            console.error(' - room', room);
+            console.error(' - data', data);
             return done('Client not found');
         }
 
@@ -213,7 +216,7 @@ io.on('connection', function(socket) {
         var p2Client = clients[clientsByPlayer[p2.id]];
 
         if (false == p2Client) {
-            console.log('play - error', p1, p2);
+            console.error('play - error', p1, p2);
             return done('player 2 client not found', room);
         }
 
