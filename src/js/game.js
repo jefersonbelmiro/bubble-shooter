@@ -264,7 +264,7 @@
                 left.innerHTML = '<hr />player<br />';
                 var i = 1;
                 BubbleShoot._queue.player.forEach(function(data) {
-                    left.innerHTML += '#'+ i + '  ' + data.tag + '  ' + data.angle + '<br />';
+                    left.innerHTML += '#'+ (i++) + '  ' + data.tag + '  ' + data.angle + '<br />';
                 });
                 var right = document.createElement('pre');
                 right.style.background = '#000';
@@ -272,7 +272,7 @@
                 right.innerHTML = '<hr />enemy<br />';
                 i = 1;
                 BubbleShoot._queue.enemy.forEach(function(data) {
-                    right.innerHTML += '#' + i + '  ' + data.tag + '  ' + data.angle + '<br />';
+                    right.innerHTML += '#' + (i++) + '  ' + data.tag + '  ' + data.angle + '<br />';
                 });
                 right.innerHTML += '<hr />';
 
