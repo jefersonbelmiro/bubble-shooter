@@ -270,6 +270,11 @@ io.on('connection', function(socket) {
 
         roomByPlayer[data.player.id] = room;
         var hostClient = clients[clientsByPlayer[p1.id]];
+        
+        if (!hostClient) {
+            return done('host client not found!');
+        }
+
         hostClient.emit('player-join-room', room);
 
         done(false, room);
