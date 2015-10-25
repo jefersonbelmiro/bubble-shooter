@@ -204,7 +204,7 @@
         {
             if (this.isMultiplayer()) {
 
-                if (!BubbleShoot.player.shooter.bubble || BubbleShoot.player.shooter._loading) {
+                if (!BubbleShoot.player.shooter._loaded) {
                     return false;
                 }
 

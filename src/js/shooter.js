@@ -37,9 +37,10 @@
             return false;
         }
 
+        this.bubble = null; 
         var trajectory = trajectory || BubbleShoot.Collision.trajectory(this.position, Utils.degreesToRadians(this.angle), this.player.board);
         bubble.move(trajectory, done);
-        this.bubble = null; 
+        return true;
     };
 
     Shooter.prototype.getBitmapData = function() {
@@ -102,18 +103,16 @@
         }
 
         var bubble = BubbleShoot.Bubble.create(this.player, null, null, nextTag);
-        this.bubble = bubble;
 
         bubble.anchor.setTo(0.5)
         bubble.position.set(this.x, this.y);
         
         var done = function() {
-            // this.bubble = bubble;
+            this.bubble = bubble;
             this._loading = false;
             this._loaded = true;
         };
 
-        force = true; // @todo - debug
         if (force) {
             return done.call(this);
         }
