@@ -163,7 +163,7 @@ io.on('connection', function(socket) {
         var room = roomByPlayer[data.playerId];
         var p1 = room.players[0];
         var p2 = room.players[1];
-        var tagsLoad = createBubbles(2);
+        var tagsLoad = createBubbles(1);
 
         var dataSend = {angle: data.angle, tag: data.tag, load: tagsLoad};
         var client;
