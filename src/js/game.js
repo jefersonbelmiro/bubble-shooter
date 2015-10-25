@@ -263,16 +263,14 @@
                 left.style.color = '#fff';
                 left.innerHTML = '<hr />player<br />';
                 BubbleShoot._queue.player.forEach(function(data) {
-                    left.innerHTML += data.tag + ' - ' + data.angle;
+                    left.innerHTML += data.tag + ' - ' + data.angle + '<br />';
                 });
-                left.innerHTML += '<hr />';
-
                 var right = document.createElement('pre');
                 right.style.background = '#000';
                 right.style.color = '#fff';
                 right.innerHTML = '<hr />enemy<br />';
                 BubbleShoot._queue.enemy.forEach(function(data) {
-                    right.innerHTML += data.tag + ' - ' + data.angle;
+                    right.innerHTML += data.tag + ' - ' + data.angle + '<br />';
                 });
                 right.innerHTML += '<hr />';
 
