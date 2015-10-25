@@ -76,7 +76,7 @@
     Shooter.prototype.load = function(tag)
     {
         if (Array.isArray(tag)) {
-            return this._queue.concat(tag);
+            return this._queue = this._queue.concat(tag);
         }
         this._queue.push(tag);
     }
