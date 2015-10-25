@@ -290,7 +290,7 @@ io.on('connection', function(socket) {
             console.error(' - room', room);
             console.error(' - data', data);
             console.error(' - clientsByPlayer', clientsByPlayer);
-            console.error(' - clients', clients);
+            console.error(' - clients', Object.keys(clients));
             return done('host client not found!');
         }
 
