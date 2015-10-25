@@ -286,6 +286,11 @@ io.on('connection', function(socket) {
         var hostClient = clients[clientsByPlayer[p1.id]];
         
         if (!hostClient) {
+            console.error('host client not found!');
+            console.error(' - room', room);
+            console.error(' - data', data);
+            console.error(' - clientsByPlayer', clientsByPlayer);
+            console.error(' - clients', clients);
             return done('host client not found!');
         }
 
