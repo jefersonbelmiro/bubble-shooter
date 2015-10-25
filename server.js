@@ -181,6 +181,8 @@ io.on('connection', function(socket) {
             console.error('client not found');
             console.error(' - room', room);
             console.error(' - data', data);
+            console.error(' - clientsByPlayer', clientsByPlayer);
+            console.error(' - clients', Object.keys(clients));
         }
 
         done(false, tag);
