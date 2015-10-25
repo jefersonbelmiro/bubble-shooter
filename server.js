@@ -163,8 +163,9 @@ io.on('connection', function(socket) {
         var room = roomByPlayer[data.playerId];
         var p1 = room.players[0];
         var p2 = room.players[1];
-        var tag = getRandomTag();
-        var dataSend = {angle: data.angle, tag: data.tag, load: tag};
+        var tagsLoad = createBubbles(3);
+
+        var dataSend = {angle: data.angle, tag: data.tag, load: tagsLoad};
         var client;
 
         console.log('player-fire', dataSend);
@@ -186,7 +187,7 @@ io.on('connection', function(socket) {
             console.error(' - clients', Object.keys(clients));
         }
 
-        done(false, tag);
+        done(false, tagsLoad);
     });
 
     socket.on('finish', function(data) {
