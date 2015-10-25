@@ -197,15 +197,21 @@
         inputUp : function(input, event) 
         {
             if (this.isMultiplayer()) {
-                var data = {
-                    playerId : BubbleShoot.player.id,
-                    angle : BubbleShoot.player.shooter.angle,
-                    tag : BubbleShoot.player.shooter.bubble.tag,
-                }
 
                 if (!BubbleShoot.player.shooter.bubble) {
                     return false;
                 }
+
+                if (!BubbleShoot.player.shooter.bubble.tag) {
+                    console.error('bubble without tag', BubbleShoot.player.shooter.bubble.frameName, BubbleShoot.player.shooter.bubble.tag);
+                    return false;
+                } 
+
+                var data = {
+                    playerId : BubbleShoot.player.id,
+                    angle : BubbleShoot.player.shooter.angle,
+                    tag : BubbleShoot.player.shooter.bubble.tag,
+                } 
 
                 BubbleShoot._queue.player.push({angle : data.angle, tag: data.tag});
 

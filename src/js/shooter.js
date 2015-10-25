@@ -101,7 +101,7 @@
             return false;
         }
 
-        var bubble = BubbleShoot.Bubble.create(this.player, undefined, undefined, nextTag);
+        var bubble = BubbleShoot.Bubble.create(this.player, null, null, nextTag);
 
         bubble.anchor.setTo(0.5)
         bubble.position.set(this.x, this.y);
