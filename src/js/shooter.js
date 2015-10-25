@@ -75,6 +75,7 @@
 
     Shooter.prototype.load = function(tag)
     {
+        console.log('load', tag, this._queue.toString());
         if (Array.isArray(tag)) {
             return this._queue = tag;
         }
