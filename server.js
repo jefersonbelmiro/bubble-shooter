@@ -164,9 +164,10 @@ io.on('connection', function(socket) {
         var p1 = room.players[0];
         var p2 = room.players[1];
         var tag = getRandomTag();
+        var dataSend = {angle: data.angle, tag: data.tag, load: tag};
         var client;
 
-        console.log('player-fire', data, tag);
+        console.log('player-fire', dataSend);
 
         if (data.playerId == p1.id) {
             client = clients[clientsByPlayer[p2.id]];
@@ -175,7 +176,7 @@ io.on('connection', function(socket) {
         }
 
         if (client) {
-            client.emit('player-fire', {angle: data.angle, tag: data.tag, load: tag});
+            client.emit('player-fire', dataSend);
         }
         if (!client) {
             console.error('client not found');
