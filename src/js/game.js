@@ -98,7 +98,9 @@
                     BubbleShoot._queue.enemy.push(data);
 
                     console.log('on: player-fire', data.tag, data.angle);
-                    BubbleShoot.enemy.shooter.load(data.tag);
+                    BubbleShoot.enemy.shooter.bubble.frameName = data.tag;
+                    BubbleShoot.enemy.shooter.bubble.tag = data.tag;
+                    BubbleShoot.enemy.shooter.load(data.load);
                     BubbleShoot.enemy.shooter.angle = 180 - data.angle;
                     BubbleShoot.enemy.fire();
                 });
@@ -198,13 +200,14 @@
                 var data = {
                     playerId : BubbleShoot.player.id,
                     angle : BubbleShoot.player.shooter.angle,
+                    tag : BubbleShoot.player.shooter.bubble.tag,
                 }
 
                 if (!BubbleShoot.player.shooter.bubble) {
                     return false;
                 }
 
-                BubbleShoot._queue.player.push({angle : data.angle, tag: BubbleShoot.player.shooter.bubble.tag});
+                BubbleShoot._queue.player.push({angle : data.angle, tag: data.tag});
 
                 console.log('inputUp', data.angle);
                 BubbleShoot.server.emit('player-fire', data, function(error, tag) {

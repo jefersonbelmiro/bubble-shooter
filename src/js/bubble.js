@@ -12,7 +12,7 @@
         // this.body.collideWorldBounds = true;
         // this.body.bounce.setTo(1);
 
-        this.tag = this.frameName;
+        this.tag = spriteName || this.frameName;
     
         this.scale.setTo(BubbleShoot.UI.bubble.scale);
         this.anchor.setTo(0.5);

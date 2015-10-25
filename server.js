@@ -175,7 +175,7 @@ io.on('connection', function(socket) {
         }
 
         if (client) {
-            client.emit('player-fire', {angle: data.angle, tag: tag});
+            client.emit('player-fire', {angle: data.angle, tag: data.tag, load: tag});
         }
         if (!client) {
             console.error('client not found');
