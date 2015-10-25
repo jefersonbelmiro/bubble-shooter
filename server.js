@@ -1,6 +1,7 @@
 var path = require('path');
 var app = require('express')();
 var http = require('http').createServer(app);
+// var io = require('socket.io')(http, {origins: '*:*'});
 var io = require('socket.io')(http, {origins: '*:*'});
 var REQUEST_PATH = path.dirname(__dirname);
 
@@ -81,19 +82,19 @@ function createBubbles(len)
     return bubbles;
 }
 
-io.set('origins', '*:*');
-
-app.use(function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Cache-Control, Pragma, Origin, Authorization, Content-Type, X-Requested-With");
-    res.header("Access-Control-Allow-Methods", "GET, PUT, POST");
-    if ('OPTIONS' === req.method) {
-        res.status(204).send();
-    }
-    else {
-        next();
-    }
-});
+// io.set('origins', '*:*');
+//
+// app.use(function (req, res, next) {
+//     res.header("Access-Control-Allow-Origin", "*");
+//     res.header("Access-Control-Allow-Headers", "Cache-Control, Pragma, Origin, Authorization, Content-Type, X-Requested-With");
+//     res.header("Access-Control-Allow-Methods", "GET, PUT, POST");
+//     if ('OPTIONS' === req.method) {
+//         res.status(204).send();
+//     }
+//     else {
+//         next();
+//     }
+// });
 
 io.on('connection', function(socket) {
 
@@ -173,14 +174,15 @@ io.on('connection', function(socket) {
             client = clients[clientsByPlayer[p1.id]];
         }
 
+        if (client) {
+            client.emit('player-fire', {angle: data.angle, tag: tag});
+        }
         if (!client) {
             console.error('client not found');
             console.error(' - room', room);
             console.error(' - data', data);
-            return done('Client not found');
         }
 
-        client.emit('player-fire', {angle: data.angle, tag: tag});
         done(false, tag);
     });
 
