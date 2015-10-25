@@ -62,7 +62,7 @@
         }
         var connect = function()
         {
-            this.socket = io(this.path, {port: this.port});
+            this.socket = io(this.path, {port: this.port, secure: false});
             this.socket = this.socket.connect(this.path);
             if (!this.socket) {
                 console.error('path', this.path, this.port);
@@ -70,6 +70,14 @@
                 console.error('sockect', this.socket);
                 return done('error connecting to the server');
             }
+
+            this.socket.on('connect', function() {
+                alert('socket connect');
+            });
+            this.socket.on('disconnect', function() {
+                alert('socket disconect');
+            });
+            
             done();
         }
         this.requireSocketLibray(function(error) {
@@ -95,7 +103,6 @@
         var head = document.getElementsByTagName('head')[0];
         var node = document.createElement('script');
         node.addEventListener('load', function() {
-            alert('script has loaded');
             done(false);
         });
         node.addEventListener('error', function() {

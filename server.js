@@ -159,12 +159,13 @@ io.on('connection', function(socket) {
 
     socket.on('player-fire', function(data, done) {
 
-        console.log('player-fire', arguments);
         var room = roomByPlayer[data.playerId];
         var p1 = room.players[0];
         var p2 = room.players[1];
         var tag = getRandomTag();
         var client;
+
+        console.log('player-fire', data, tag);
 
         if (data.playerId == p1.id) {
             client = clients[clientsByPlayer[p2.id]];
