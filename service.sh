@@ -2,7 +2,7 @@
 
 case "$1" in
     start)
-        /usr/bin/nodejs server.js >> /tmp/server.log &
+        /usr/bin/nodejs server.js > /tmp/server.log 2> /tmp/server.error.log &
         echo -e "\n - server start\n"
         exit 1
         ;;
