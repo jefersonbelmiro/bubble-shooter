@@ -120,7 +120,8 @@
         var scale = BubbleShoot.UI.bubble.scale;
         bubble.scale.setTo(0.001);
         var anim = BubbleShoot.game.add.tween(bubble.scale);
-        anim.to({x: scale, y: scale}, 333);
+        // anim.to({x: scale, y: scale}, 333);
+        anim.to({x: scale, y: scale}, 2000);
         anim.onComplete.add(done.bind(this));
         anim.start();
 
