@@ -190,6 +190,10 @@ io.on('connection', function(socket) {
         done(false, tagsLoad);
     });
 
+    socket.on('debug-queue', function(data) {
+        console.log("\n\n - debug-queue:\n", data, "\n\n");
+    });
+
     socket.on('finish', function(data) {
 
         console.log('game-finish', data);
