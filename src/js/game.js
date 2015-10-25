@@ -104,6 +104,7 @@
                         BubbleShoot.enemy.shooter.bubble.tag = data.tag;
                     }
 
+                    BubbleShoot.enemy.shooter._queue = [];
                     BubbleShoot.enemy.shooter.load(data.load);
 
                     BubbleShoot.enemy.shooter.angle = 180 - data.angle;
@@ -227,6 +228,7 @@
                         return console.error('error: ' . error);
                     }
 
+                    BubbleShoot.player.shooter._queue = [];
                     BubbleShoot.player.shooter.load(tag);
                     console.log('emit: player-fire', tag);
                 });
