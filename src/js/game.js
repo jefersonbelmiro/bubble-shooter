@@ -90,9 +90,12 @@
 
             if (BubbleShoot.mode == BubbleShoot.MODES.MULTIPLAYER) {
                 
+                BubbleShoot._queue = { player: [], enemy : []};
                 var _this = this;
                 BubbleShoot.server.removeAllListeners();
                 BubbleShoot.server.on('player-fire', function(data) {
+
+                    BubbleShoot._queue.enemy.push(data);
 
                     console.log('on: player-fire', data.tag, data.angle);
                     BubbleShoot.enemy.shooter.load(data.tag);
@@ -201,6 +204,8 @@
                     return false;
                 }
 
+                BubbleShoot._queue.player.push({angle : data.angle, tag: BubbleShoot.player.shooter.bubble.tag});
+
                 console.log('inputUp', data.angle);
                 BubbleShoot.server.emit('player-fire', data, function(error, tag) {
 
@@ -251,6 +256,29 @@
             console.log('game has finished', winner.id);
 
             if (this.isMultiplayer()) {
+
+                var debug = document.getElementById('debug-container');
+                var left = document.createElement('pre');
+                left.style.background = '#000';
+                left.style.color = '#fff';
+                left.innerHTML = '<hr />player<br />';
+                BubbleShoot._queue.player.forEach(function(data) {
+                    left.innerHTML += data.tag + ' - ' + data.angle;
+                });
+                left.innerHTML += '<hr />';
+
+                var right = document.createElement('pre');
+                right.style.background = '#000';
+                right.style.color = '#fff';
+                right.innerHTML = '<hr />enemy<br />';
+                BubbleShoot._queue.enemy.forEach(function(data) {
+                    right.innerHTML += data.tag + ' - ' + data.angle;
+                });
+                right.innerHTML += '<hr />';
+
+                debug.appendChild(left);
+                debug.appendChild(right);
+
                 if (!BubbleShoot.finishedByServer) {
                     // BubbleShoot.finishedByServer = true;
                     var room = BubbleShoot.room;
