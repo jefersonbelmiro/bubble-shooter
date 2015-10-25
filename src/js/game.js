@@ -102,9 +102,14 @@
                     }
 
                     console.log('on: player-fire', data.tag, data.angle);
-                    BubbleShoot.enemy.shooter.bubble.frameName = data.tag;
-                    BubbleShoot.enemy.shooter.bubble.tag = data.tag;
+
+                    if (BubbleShoot.enemy.shooter.bubble) {
+                        BubbleShoot.enemy.shooter.bubble.frameName = data.tag;
+                        BubbleShoot.enemy.shooter.bubble.tag = data.tag;
+                    }
+
                     BubbleShoot.enemy.shooter.load(data.load);
+
                     BubbleShoot.enemy.shooter.angle = 180 - data.angle;
                     BubbleShoot.enemy.fire();
                 });

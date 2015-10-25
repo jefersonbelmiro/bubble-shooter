@@ -102,12 +102,13 @@
         }
 
         var bubble = BubbleShoot.Bubble.create(this.player, null, null, nextTag);
+        this.bubble = bubble;
 
         bubble.anchor.setTo(0.5)
         bubble.position.set(this.x, this.y);
         
         var done = function() {
-            this.bubble = bubble;
+            // this.bubble = bubble;
             this._loading = false;
             this._loaded = true;
         };
