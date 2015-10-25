@@ -204,14 +204,9 @@
         {
             if (this.isMultiplayer()) {
 
-                if (!BubbleShoot.player.shooter.bubble) {
+                if (!BubbleShoot.player.shooter.bubble || BubbleShoot.player.shooter._loading) {
                     return false;
                 }
-
-                if (!BubbleShoot.player.shooter.bubble.tag) {
-                    console.error('bubble without tag', BubbleShoot.player.shooter.bubble.frameName, BubbleShoot.player.shooter.bubble.tag);
-                    return false;
-                } 
 
                 var data = {
                     playerId : BubbleShoot.player.id,
