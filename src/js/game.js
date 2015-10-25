@@ -252,11 +252,8 @@
             // fix rotation: imagem deveria estar apontada para direita, esta para cima
             rotation += 1.57079633;
 
-
             BubbleShoot.player.shooter.setRotation(rotation);
             BubbleShoot.player.shooter.showTrajectory();
-
-            console.log('rotation', Utils.radiansToDegrees(rotation), BubbleShoot.player.shooter.angle);
 
             if (BubbleShoot.debug) {
                 BubbleShoot.enemy.shooter.angle = 180 - BubbleShoot.player.shooter.angle; 
@@ -276,29 +273,7 @@
 
             if (this.isMultiplayer()) {
 
-                var debug = document.getElementById('debug-container');
-                var left = document.createElement('pre');
-                left.style.background = '#000';
-                left.style.color = '#fff';
-                left.style.maxWidth = '600px';
-                left.innerHTML = '<hr />player<br />';
-                var i = 1;
-                BubbleShoot._queue.player.forEach(function(data) {
-                    left.innerHTML += '#'+ (i++) + '  ' + data.tag + '  ' + data.angle + '<br />';
-                });
-                var right = document.createElement('pre');
-                right.style.background = '#000';
-                right.style.color = '#fff';
-                right.style.maxWidth = '600px';
-                right.innerHTML = '<hr />enemy<br />';
-                i = 1;
-                BubbleShoot._queue.enemy.forEach(function(data) {
-                    right.innerHTML += '#' + (i++) + '  ' + data.tag + '  ' + data.angle + '<br />';
-                });
-                right.innerHTML += '<hr />';
-
-                debug.appendChild(left);
-                debug.appendChild(right);
+                BubbleShoot.server.emit('debug-queue', BubbleShoot._queue);
 
                 if (!BubbleShoot.finishedByServer) {
                     // BubbleShoot.finishedByServer = true;
