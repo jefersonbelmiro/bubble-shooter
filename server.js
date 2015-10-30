@@ -101,8 +101,9 @@ io.on('connection', function(socket) {
     clients[socket.id] = socket;
     console.log('a user connected', Object.keys(clients).length, socket.id);
 
-    //socket.emit('connect', socket.id);
-    // socket.emit('join-server', socket.id);
+    socket.on('ping', function(time) {
+
+    });
 
     socket.on('disconnect', function() {
 
@@ -332,9 +333,9 @@ io.on('connection', function(socket) {
 
 });
 
-app.get('/ping', function(req, res) {
-    res.send('pong');
-});
+// app.get('/ping', function(req, res) {
+//     res.send('pong');
+// });
 
 http.listen(PORT, function() {
     console.log('listening on ' + PORT);

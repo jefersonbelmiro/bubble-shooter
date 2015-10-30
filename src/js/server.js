@@ -100,6 +100,14 @@
         }); 
     }
 
+    Server.prototype.ping = function(done)
+    {
+        var last = Date.now();
+        this.socket.emit('ping', function() {
+            done(Date.now() - last);
+        });
+    }
+
     Server.prototype.disconnect = function()
     {
         return this.socket.disconnect();
