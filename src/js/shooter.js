@@ -113,6 +113,10 @@
             this._loaded = true;
         };
 
+        if (BubbleShoot.enemy.id == this.player.id && BubbleShoot.isMultiplayer()) {
+            force = true;
+        }
+
         if (force) {
             return done.call(this);
         }
