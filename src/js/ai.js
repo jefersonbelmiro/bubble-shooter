@@ -73,8 +73,9 @@
             var tween = BubbleShoot.game.add.tween(this.player.shooter);
             tween.to({rotation : data.rotation}, time);
             tween.onComplete.add(function() {
-                this.player.shooter.load(BubbleShoot.Bubble.getRandomSprite());
                 this.player.fire(done.bind(this), data.trajectory);
+                this.player.shooter.load(BubbleShoot.Bubble.getRandomSprite());
+                this.player.shooter.reload();
             }.bind(this))
             tween.start();
         }

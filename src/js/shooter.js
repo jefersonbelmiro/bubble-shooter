@@ -55,6 +55,7 @@
 
     Shooter.prototype.showTrajectory = function() {
 
+        return false;
         var trajectory = BubbleShoot.Collision.trajectory(this.position, this.rotation, this.player.board);
         
         var bmd = this.getBitmapData();
