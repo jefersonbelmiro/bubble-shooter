@@ -63,20 +63,21 @@
         var connect = function()
         {
             this.socket = io(this.path, {port: this.port, secure: false});
-            this.socket = this.socket.connect(this.path);
-            if (!this.socket) {
-                console.error('path', this.path, this.port);
-                console.error('io', io);
-                console.error('sockect', this.socket);
-                return done('error connecting to the server');
-            }
-
             this.socket.on('connect', function() {
                 alert('socket connect');
             });
             this.socket.on('disconnect', function() {
                 alert('socket disconect');
             });
+
+            this.socket = this.socket.connect(this.path);
+
+            if (!this.socket) {
+                console.error('path', this.path, this.port);
+                console.error('io', io);
+                console.error('sockect', this.socket);
+                return done('error connecting to the server');
+            } 
             
             done();
         }

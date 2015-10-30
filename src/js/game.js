@@ -8,6 +8,35 @@
         this.game = _game;
     }    
 
+    var _queue = [];
+
+    function _nextTick(fn)
+    {
+        return setTimeout(fn, 16.666);
+    }
+
+    function _processQueue() 
+    {
+        var player = BubbleShoot.enemy;
+        var data = queue.shift();
+
+        if (data) {
+            return false;
+        }
+
+        if (player.shooter._loading) {
+            return _nextTick(_processQueue);
+        }
+
+        if (player.shooter.bubble.tag != data.tag) {
+            console.error('_processQueue', player.shooter.bubble.tag, data.tag);
+        }
+
+        player.shooter.angle = 180 - data.angle;
+        player.fire();
+        return true;
+    }
+
     Game.prototype = {
 
         create: function() 
@@ -90,22 +119,17 @@
 
             if (BubbleShoot.mode == BubbleShoot.MODES.MULTIPLAYER) {
                 
-                BubbleShoot._queue = { player: [], enemy : []};
+                // BubbleShoot._queue = { player: [], enemy : []};
                 var _this = this;
                 BubbleShoot.server.removeAllListeners();
                 BubbleShoot.server.on('player-fire', function(data) {
 
-                    BubbleShoot._queue.enemy.push(data);
+                    // BubbleShoot._queue.enemy.push(data);
 
-                    console.log('on: player-fire', data.tag, data.angle, data.load, typeof(data.load));
-
-                    if (BubbleShoot.enemy.shooter.bubble) {
-                        BubbleShoot.enemy.shooter.bubble.frameName = data.tag;
-                        BubbleShoot.enemy.shooter.bubble.tag = data.tag;
-                    }
-
-                    BubbleShoot.enemy.shooter._queue = [];
                     BubbleShoot.enemy.shooter.load(data.load);
+
+                    _queue.push(data);
+                    _processQueue();
 
                     BubbleShoot.enemy.shooter.angle = 180 - data.angle;
                     BubbleShoot.enemy.fire();
@@ -214,16 +238,14 @@
                     tag : BubbleShoot.player.shooter.bubble.tag,
                 } 
 
-                BubbleShoot._queue.player.push({angle : data.angle, tag: data.tag});
+                // BubbleShoot._queue.player.push({angle : data.angle, tag: data.tag});
 
-                console.log('inputUp', data.angle);
                 BubbleShoot.server.emit('player-fire', data, function(error, tag) {
 
                     if (error) {
                         return console.error('error: ' . error);
                     }
 
-                    BubbleShoot.player.shooter._queue = [];
                     BubbleShoot.player.shooter.load(tag);
                     console.log('emit: player-fire', tag);
                 });
@@ -268,7 +290,7 @@
 
             if (this.isMultiplayer()) {
 
-                BubbleShoot.server.emit('debug-queue', BubbleShoot._queue);
+                // BubbleShoot.server.emit('debug-queue', BubbleShoot._queue);
 
                 if (!BubbleShoot.finishedByServer) {
                     // BubbleShoot.finishedByServer = true;
