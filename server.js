@@ -101,6 +101,8 @@ io.on('connection', function(socket) {
     clients[socket.id] = socket;
     console.log('a user connected', Object.keys(clients).length, socket.id);
 
+    socket.emit('connect');
+
     socket.on('disconnect', function() {
 
         console.log('a user disconnect', playersByClient[socket.id], Object.keys(clients).length, socket.id); 

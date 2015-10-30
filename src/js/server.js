@@ -62,15 +62,8 @@
         }
         var connect = function()
         {
-            this.socket = io(this.path, {port: this.port, secure: false});
-            this.socket.on('connect', function() {
-                alert('socket connect');
-            });
-            this.socket.on('disconnect', function() {
-                alert('socket disconect');
-            });
-
-            this.socket = this.socket.connect(this.path);
+            var socket = io(this.path, {port: this.port, secure: false});
+            this.socket = socket.connect();
 
             if (!this.socket) {
                 console.error('path', this.path, this.port);
@@ -78,7 +71,15 @@
                 console.error('sockect', this.socket);
                 return done('error connecting to the server');
             } 
-            
+
+            this.socket.on('connect', function() {
+                alert('socket connect ' + BubbleShoot.nickname);
+            });
+
+            this.socket.on('disconnect', function() {
+                alert('socket disconect');
+            }); 
+
             done();
         }
         this.requireSocketLibray(function(error) {
