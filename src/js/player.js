@@ -64,7 +64,7 @@
                 } 
             }
             var fired = this.shooter.fire(fire.bind(this), trajectory);
-            this.shooter.reload();
+            // this.shooter.reload();
         },
     }
 

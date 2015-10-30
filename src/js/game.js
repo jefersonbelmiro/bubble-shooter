@@ -37,6 +37,7 @@
         }
 
         player.shooter.angle = 180 - data.angle;
+        player.shooter.reload(true, data.tag);
         player.fire();
         return true;
     }
@@ -261,10 +262,12 @@
                 if (BubbleShoot.debug) {
                     BubbleShoot.enemy.shooter.load(bubbleTag); 
                     BubbleShoot.enemy.fire();
+                    BubbleShoot.enemy.shooter.reload();
                 }
             }
 
             BubbleShoot.player.fire();
+            BubbleShoot.player.shooter.reload();
         }, 
 
         inputMove : function(input, x, y, fromClick) 
