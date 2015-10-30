@@ -8,28 +8,28 @@
         this.game = _game;
     }    
 
-    var _queue = [];
+    var _enemyQueue = [];
 
     function _nextTick(fn)
     {
         return setTimeout(fn, 16.666);
     }
 
-    function _processQueue() 
+    function _processEnemyQueue() 
     {
         var player = BubbleShoot.enemy;
-        var data = queue.shift();
+        var data = _enemyQueue.shift();
 
         if (data) {
             return false;
         }
 
         if (player.shooter._loading) {
-            return _nextTick(_processQueue);
+            return _nextTick(_processEnemyQueue);
         }
 
         if (player.shooter.bubble.tag != data.tag) {
-            console.error('_processQueue', player.shooter.bubble.tag, data.tag);
+            console.error('_processEnemyQueue', player.shooter.bubble.tag, data.tag);
         }
 
         player.shooter.angle = 180 - data.angle;
@@ -128,8 +128,8 @@
 
                     BubbleShoot.enemy.shooter.load(data.load);
 
-                    _queue.push(data);
-                    _processQueue();
+                    _enemyQueue.push(data);
+                    _processEnemyQueue();
 
                     BubbleShoot.enemy.shooter.angle = 180 - data.angle;
                     BubbleShoot.enemy.fire();
