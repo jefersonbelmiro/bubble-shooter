@@ -101,7 +101,7 @@ io.on('connection', function(socket) {
     clients[socket.id] = socket;
     console.log('a user connected', Object.keys(clients).length, socket.id);
 
-    socket.emit('connect');
+    socket.emit('connect', {id: socket.id});
 
     socket.on('disconnect', function() {
 
@@ -329,6 +329,10 @@ io.on('connection', function(socket) {
         socket.broadcast.emit('create-room');
     });
 
+});
+
+app.get('/ping', function(req, res) {
+    res.send('pong');
 });
 
 http.listen(PORT, function() {
