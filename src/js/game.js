@@ -46,7 +46,7 @@
 
         player.shooter.angle = 180 - data.angle;
         player.fire();
-        player.shooter.reload(true);
+        player.shooter.reload();
 
         return true;
     }
