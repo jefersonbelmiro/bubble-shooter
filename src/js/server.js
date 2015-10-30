@@ -86,7 +86,7 @@
         }.bind(this));
     }
 
-    Server.prototype.registryDefaultEvents()
+    Server.prototype.registryDefaultEvents = function()
     {
         this.socket.on('connect', function(socketId) {
             alert('socket connect ' + socketId);

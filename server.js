@@ -101,8 +101,8 @@ io.on('connection', function(socket) {
     clients[socket.id] = socket;
     console.log('a user connected', Object.keys(clients).length, socket.id);
 
-    socket.emit('connect', {id: socket.id});
-    socket.emit('join-server', {id: socket.id});
+    socket.emit('connect', socket.id);
+    socket.emit('join-server', socket.id);
 
     socket.on('disconnect', function() {
 
