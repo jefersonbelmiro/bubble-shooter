@@ -18,26 +18,27 @@
     function _processEnemyQueue() 
     {
         var player = BubbleShoot.enemy;
-
-        if (player.shooter._loading) {
-            return _nextTick(_processEnemyQueue);
-        }
-
         var data = _enemyQueue.shift();
+
+        console.log('_processEnemyQueue', player.shooter._loading, data);
 
         if (!data) {
             return false;
         }
 
+        if (player.shooter._loading) {
+            return _nextTick(_processEnemyQueue);
+        }
+
         if (!player.shooter.bubble) {
-            console.error('2]_processEnemyQueue', data.tag);
+            console.erro('2]_processEnemyQueue', player.shooter.bubble.tag, data.tag);
             // player.shooter.reload(true, data.tag);
         }
 
         if (player.shooter.bubble.tag != data.tag) {
             player.shooter.bubble.tag = data.tag;
             player.shooter.bubble.frameName = data.tag;
-            console.error('2]_processEnemyQueue', player.shooter.bubble.tag, data.tag);
+            console.erro('2]_processEnemyQueue', player.shooter.bubble.tag, data.tag);
         }
 
         console.log('fire', player.shooter.bubble.tag);
