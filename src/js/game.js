@@ -131,8 +131,8 @@
                     _enemyQueue.push(data);
                     _processEnemyQueue();
 
-                    BubbleShoot.enemy.shooter.angle = 180 - data.angle;
-                    BubbleShoot.enemy.fire();
+                    // BubbleShoot.enemy.shooter.angle = 180 - data.angle;
+                    // BubbleShoot.enemy.fire();
                 });
 
                 BubbleShoot.server.on('finish', function(winnerID) {
