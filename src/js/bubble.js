@@ -198,6 +198,7 @@
             bubble.col = col;
             bubble.frameName = spriteName;
             bubble.tag = spriteName;
+            bubble.scale.setTo(BubbleShoot.UI.bubble.scale);
             bubble.player = player;
         }
 

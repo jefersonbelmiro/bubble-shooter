@@ -15,6 +15,8 @@
         return setTimeout(fn, 16.666);
     }
 
+    BubbleShoot.nextTick = _nextTick;
+
     function _processEnemyQueue() 
     {
         var player = BubbleShoot.enemy;
@@ -30,7 +32,7 @@
         }
 
         if (!player.shooter.bubble) {
-            console.error('2]_processEnemyQueue', data.tag);
+            console.error('1]_processEnemyQueue', data.tag);
             // player.shooter.reload(true, data.tag);
         }
 

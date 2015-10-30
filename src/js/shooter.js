@@ -119,7 +119,7 @@
         // }
 
         if (force) {
-            return done.call(this);
+            return BubbleShoot.nextTick(done.bind(this));
         }
 
         var scale = BubbleShoot.UI.bubble.scale;
