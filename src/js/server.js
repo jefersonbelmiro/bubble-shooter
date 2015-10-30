@@ -44,7 +44,9 @@
 
     Server.prototype.removeAllListeners = function()
     {
-        return this.socket.removeAllListeners();
+        this.socket.removeAllListeners();
+        this.registryDefaultEvents();
+        return true;
     }
 
     Server.prototype.connected = function()
@@ -72,17 +74,7 @@
                 return done('error connecting to the server');
             } 
 
-            this.socket.on('connect', function(socketId) {
-                alert('socket connect ' + socketId);
-            });
-
-            this.socket.on('disconnect', function() {
-                alert('socket disconect');
-            }); 
-
-            this.socket.on('join-server', function(socketId) {
-                alert('socketId ' + socketId);
-            });
+            this.registryDefaultEvents();
 
             done();
         }
@@ -92,6 +84,21 @@
             }
             connect.call(this);
         }.bind(this));
+    }
+
+    Server.prototype.registryDefaultEvents()
+    {
+        this.socket.on('connect', function(socketId) {
+            alert('socket connect ' + socketId);
+        });
+
+        this.socket.on('disconnect', function() {
+            alert('socket disconect');
+        }); 
+
+        this.socket.on('join-server', function(socketId) {
+            alert('socketId ' + socketId);
+        }); 
     }
 
     Server.prototype.disconnect = function()
