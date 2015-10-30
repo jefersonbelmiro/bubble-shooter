@@ -113,7 +113,7 @@
             this._loaded = true;
         };
 
-        if (BubbleShoot.enemy.id == this.player.id && BubbleShoot.isMultiplayer()) {
+        if (BubbleShoot.enemy.id == this.player.id && BubbleShoot.mode == BubbleShoot.MODES.MULTIPLAYER) {
             force = true;
         }
 
