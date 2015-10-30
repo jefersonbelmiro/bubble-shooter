@@ -95,7 +95,9 @@
             });
         });
 
-        // this.socket.on('disconnect', function() { }); 
+        this.socket.on('disconnect', function() { 
+            console.log('disconnect');
+        }); 
     }
 
     Server.prototype.disconnect = function()
