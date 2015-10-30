@@ -30,15 +30,22 @@
             return _nextTick(_processEnemyQueue);
         }
 
+        if (!player.shooter.bubble) {
+            player.shooter.reload(true, data.tag);
+        }
+
         if (player.shooter.bubble.tag != data.tag) {
             player.shooter.bubble.tag = data.tag;
             player.shooter.bubble.frameName = data.tag;
             console.log('_processEnemyQueue', player.shooter.bubble.tag, data.tag);
         }
 
+        console.log('fire', player.shooter.bubble.tag);
+
         player.shooter.angle = 180 - data.angle;
-        player.shooter.reload(true, data.tag);
         player.fire();
+        player.shooter.reload(true, data.tag);
+
         return true;
     }
 
