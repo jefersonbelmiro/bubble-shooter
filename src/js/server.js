@@ -70,7 +70,7 @@
             if (!this.socket) {
                 console.error('path', this.path, this.port);
                 console.error('io', io);
-                console.error('sockect', this.socket);
+                console.error('socket', this.socket);
                 return done('error connecting to the server');
             } 
 
@@ -88,17 +88,14 @@
 
     Server.prototype.registryDefaultEvents = function()
     {
-        this.socket.on('connect', function(socketId) {
-            alert('socket connect ' + socketId);
+        var _this = this;
+        this.socket.on('connect', function() {
+            _this.socket.emit('join', BubbleShoot.nickname, function(error) {
+                if (error) console.error('join error', error);
+            });
         });
 
-        this.socket.on('disconnect', function() {
-            alert('socket disconect');
-        }); 
-
-        this.socket.on('join-server', function(socketId) {
-            alert('socketId ' + socketId);
-        }); 
+        // this.socket.on('disconnect', function() { }); 
     }
 
     Server.prototype.disconnect = function()

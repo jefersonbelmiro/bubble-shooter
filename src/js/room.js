@@ -24,30 +24,19 @@
                     return this.createLabel('error connecting to the server', {position: {x: 20, y: 80}});
                 }
 
-                BubbleShoot.server.removeAllListeners();
-
                 this.createLabel('Select room', { position: {x : 10, y: 70}});
                 this.createButton('Create room', {position: {x : 442, y: 35}, callback: this.createRoom, context: this});
 
-                if (!BubbleShoot.joinServer) {
-                    BubbleShoot.server.emit('join', BubbleShoot.nickname, function(error) {
-                        
-                        if (error) {
-                            alert(error);
-                            return this.back();
-                        }
-
-                        BubbleShoot.joinServer = true;
-                        this.createListRooms();
-                    }.bind(this));
-                } else {
-                    this.createListRooms();
-                }
+                BubbleShoot.server.removeAllListeners();
 
                 // notify
                 BubbleShoot.server.once('create-room', function() {
                     this.createListRooms();
                 }, this);
+
+                BubbleShoot.joinServer = BubbleShoot.server.connected();
+
+                this.createListRooms(); 
 
             }.bind(this));
         },

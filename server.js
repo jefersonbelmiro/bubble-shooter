@@ -102,7 +102,7 @@ io.on('connection', function(socket) {
     console.log('a user connected', Object.keys(clients).length, socket.id);
 
     //socket.emit('connect', socket.id);
-    socket.emit('join-server', socket.id);
+    // socket.emit('join-server', socket.id);
 
     socket.on('disconnect', function() {
 
