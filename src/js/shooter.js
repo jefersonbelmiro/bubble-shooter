@@ -113,8 +113,9 @@
             this._loaded = true;
         };
 
+        // @todo - debug
         if (BubbleShoot.enemy.id == this.player.id && BubbleShoot.mode == BubbleShoot.MODES.MULTIPLAYER) {
-            // force = true;
+            force = true;
         }
 
         if (force) {

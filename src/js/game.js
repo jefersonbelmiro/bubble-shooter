@@ -20,7 +20,9 @@
         var player = BubbleShoot.enemy;
         var data = _enemyQueue.shift();
 
-        if (data) {
+        console.log('_processEnemyQueue', player.shooter._loading, data);
+
+        if (!data) {
             return false;
         }
 
@@ -29,7 +31,9 @@
         }
 
         if (player.shooter.bubble.tag != data.tag) {
-            console.error('_processEnemyQueue', player.shooter.bubble.tag, data.tag);
+            player.shooter.bubble.tag = data.tag;
+            player.shooter.bubble.frameName = data.tag;
+            console.log('_processEnemyQueue', player.shooter.bubble.tag, data.tag);
         }
 
         player.shooter.angle = 180 - data.angle;
