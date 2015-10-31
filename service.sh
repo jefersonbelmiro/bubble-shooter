@@ -11,7 +11,13 @@ case "$1" in
         echo -e "\n - server stop\n"
         exit 1
         ;;
+    restart)
+        /usr/bin/pkill -f 'nodejs server.js'
+        /usr/bin/nodejs server.js > /tmp/server.log 2> /tmp/server.error.log &
+        echo -e "\n - server restart\n"
+        exit 1
+        ;;
 esac
 
-echo -e "\n - use start or stop options\n"
+echo -e "\n - use start|stop|restart arguments\n"
 exit 2
