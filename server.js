@@ -101,8 +101,9 @@ io.on('connection', function(socket) {
     clients[socket.id] = socket;
     console.log('a user connected', Object.keys(clients).length, socket.id);
 
-    socket.on('ping', function(time) {
-
+    socket.on('ping', function(done) {
+        console.log('ping');
+        done();
     });
 
     socket.on('disconnect', function() {
