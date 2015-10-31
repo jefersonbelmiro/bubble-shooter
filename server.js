@@ -175,6 +175,8 @@ io.on('connection', function(socket) {
 
         console.log('player-fire', dataSend);
 
+        done(false, tagsLoad);
+
         if (data.playerId == p1.id) {
             client = clients[clientsByPlayer[p2.id]];
         } else {
@@ -191,8 +193,6 @@ io.on('connection', function(socket) {
             console.error(' - clientsByPlayer', clientsByPlayer);
             console.error(' - clients', Object.keys(clients));
         }
-
-        done(false, tagsLoad);
     });
 
     socket.on('debug-queue', function(data) {
