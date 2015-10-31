@@ -58,11 +58,23 @@
             BubbleShoot.CurrenteState = this;
             BubbleShoot.state = 'stated';
             BubbleShoot.finishedByServer = false;
+                
+            var backgroundData = {
+                width : BubbleShoot.game.cache.getFrame('background').width,
+                height : BubbleShoot.game.cache.getFrame('background').height,
+            }
+
+            var scaleHeight = BubbleShoot.game.height / backgroundData.height;
+            var scaleWidth = BubbleShoot.game.width / backgroundData.width;
+            var background = this.game.add.tileSprite(0, 0, backgroundData.width, backgroundData.height, "background");
+            background.scale.setTo(scaleWidth, scaleHeight);
+
+            console.log(scaleHeight, scaleWidth);
 
             this.game.stage.disableVisibilityChange = true;
 
             this.game.time.advancedTiming = true;
-            fpsText = this.game.add.text(0, 5, '00', {font: '16px Arial', fill: '#ccc'});
+            fpsText = this.game.add.text(0, 5, '00', {font: '16px Arial', fill: '#000'});
             // fpsText.x = this.game.width - fpsText.width - 5;
             fpsText.x = 5;
             this.latency = 0;
