@@ -63,7 +63,9 @@
 
             this.game.time.advancedTiming = true;
             fpsText = this.game.add.text(0, 5, '00', {font: '16px Arial', fill: '#ccc'});
-            fpsText.x = this.game.width - fpsText.width - 5;
+            // fpsText.x = this.game.width - fpsText.width - 5;
+            fpsText.x = 5;
+            this.latency = 0;
 
             BubbleShoot.entities = BubbleShoot.game.add.group();
 
@@ -198,6 +200,19 @@
                 BubbleShoot.player.enemy = BubbleShoot.enemy;
                 BubbleShoot.enemy.enemy = BubbleShoot.player;
 
+                ;(function getLatency() {
+                
+                    var updateLatency = function(latency) {
+                        _this.latency = latency;
+                        getLatency();
+                    }
+
+                    setTimeout(function() {
+                        BubbleShoot.server.ping(updateLatency)
+                    }, 2000); 
+                })();
+
+
                 return done.call(this);
             }
         },
@@ -227,7 +242,7 @@
 
         update : function() 
         {
-            fpsText.setText(this.time.fps);
+            fpsText.setText(this.time.fps + ' | ' + this.latency);
         },
 
         render : function() 
