@@ -58,13 +58,15 @@
             this.height = BubbleShoot.UI.board.height - separatorHeight;
             this.width = BubbleShoot.UI.bubble.size * this.maxCols;
 
-            this.x = BubbleShoot.UI.board.width - this.width;
+            if (BubbleShoot.game.width > this.width) {
+                this.x = (BubbleShoot.game.width - this.width)/2;
+            }
 
             if (this.side == BubbleShoot.PLAYER_SIDE_TOP) {
                 this.y = 0;
 
                 var limitLine = BubbleShoot.entities.create(
-                    0, this.player.shooter.y + this.player.shooter.height/2, 
+                    this.x, this.player.shooter.y + this.player.shooter.height/2, 
                     Utils.createRect(BubbleShoot.UI.board.width, BubbleShoot.UI.board.separatorHeight, 'red')
                 );
             }
@@ -77,13 +79,13 @@
                 this.player.shooter.y = this.y + this.height - this.player.shooter.y;
 
                 var limitLine = BubbleShoot.entities.create(
-                    0, this.player.shooter.y - this.player.shooter.height/2, 
+                    this.x, this.player.shooter.y - this.player.shooter.height/2, 
                     Utils.createRect(BubbleShoot.UI.board.width, BubbleShoot.UI.board.separatorHeight, 'red')
                 );
             } 
 
             this.player.shooter.bringToTop();
-            limitLine.alpha = 0.1; 
+            limitLine.alpha = 0.5; 
 
             var grid = this.grid.slice(0);
             this.grid = [];

@@ -81,8 +81,8 @@
 
             var topSide = board.side == BubbleShoot.PLAYER_SIDE_TOP;
 
-            var limitRight = Collision.config.gameWidth - radius;
-            var limitLeft = radius;
+            var limitRight = board.x + board.width - radius;
+            var limitLeft = board.x + radius;
 
             var limitTop = board.y + radius;
 

@@ -5,7 +5,7 @@
         this.queue = {};
 
         if (Worker) {
-            this.worker = new Worker('src/js/service.'+ servieName + '.js');
+            this.worker = new Worker('src/js/service.'+ servieName + '.js?v19');
         } else {
             alert('Error: Worker not suported!');
             // this.worker = new BubbleShoot.Service.FakeWorker();

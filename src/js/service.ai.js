@@ -1,9 +1,10 @@
 var player;
 
-importScripts('bootstrap.js');
-importScripts('utils.js');
-importScripts('collision.js');
-importScripts('board.js');
+var nocache = '?v'+Date.now();
+importScripts('bootstrap.js' + nocache);
+importScripts('utils.js' + nocache);
+importScripts('collision.js' + nocache);
+importScripts('board.js' + nocache);
 
 function response(data, args) 
 {
