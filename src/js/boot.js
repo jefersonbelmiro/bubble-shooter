@@ -1,39 +1,34 @@
-;(function(exports) {
+var UI = require('./ui.js');
 
-    var Boot = function(game) {
-        this.game = game;
-    }    
+var Boot = function(game) {
+    this.game = game;
+}    
 
-    Boot.prototype = {
-    
-        preload : function() {
+Boot.prototype = {
 
-            this.stage.backgroundColor = BubbleShoot.UI.background;
+    preload : function() {
 
-            this.load.image('preload-bar', 'src/img/preload-bar.png'); 
-            this.load.image('preload-background', 'src/img/preload-backgorund.png'); 
-        },
+        this.stage.backgroundColor = UI.background;
 
-        create : function() {
+        this.load.image('preload-bar', 'src/img/preload-bar.png'); 
+        this.load.image('preload-background', 'src/img/preload-backgorund.png'); 
+    },
 
-            // set scale options
-            this.input.maxPointers = 1;
-            this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-            this.scale.pageAlignHorizontally = true;
-            this.scale.pageAlignVertically = true;
-            // this.scale.setScreenSize(true);
+    create : function() {
 
-            // this.scale.maxWidth = Math.round(BubbleShoot.UI.width * 0.7);
-            // this.scale.maxHeight = Math.round(BubbleShoot.UI.height * 0.7);
+        // set scale options
+        this.input.maxPointers = 1;
+        this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+        this.scale.pageAlignHorizontally = true;
+        this.scale.pageAlignVertically = true;
+        // this.scale.setScreenSize(true);
 
-            // this.scale.forceOrientation(true, false);
+        // this.scale.forceOrientation(true, false);
 
-            // start the Preloader state
-            this.state.start('preloader');
-        }
-    
-    } 
+        // start the Preloader state
+        this.state.start('preloader');
+    }
 
-    exports.Boot = Boot;
+} 
 
-})(this);
+module.exports = Boot;

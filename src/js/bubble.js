@@ -1,221 +1,220 @@
-;(function(exports) {
+var BubbleShooter = require('./bubble-shooter.js');
+var Utils = require('./utils.js');
+var UI = require('./ui.js');
 
-    var spriteNames = ['green', 'blue', 'yellow', 'red', 'magenta', 'orange'];
+var spriteNames = ['green', 'blue', 'yellow', 'red', 'magenta', 'orange'];
 
-    function Bubble(player, row, col, spriteName)
-    {
-        Phaser.Sprite.call(this, BubbleShoot.game, 0, 0, 'sprites', spriteName || Bubble.getRandomSprite());
-        BubbleShoot.entities.bubbles.add(this);
+function Bubble(player, row, col, spriteName)
+{
+    Phaser.Sprite.call(this, BubbleShooter.game, 0, 0, 'sprites', spriteName || Bubble.getRandomSprite());
+    BubbleShooter.entities.bubbles.add(this);
 
-        this.player = player;
+    this.player = player;
 
-        // this.body.collideWorldBounds = true;
-        // this.body.bounce.setTo(1);
-
-        this.tag = spriteName || this.frameName;
+    // this.body.collideWorldBounds = true;
+    // this.body.bounce.setTo(1);
     
-        this.scale.setTo(BubbleShoot.UI.bubble.scale);
-        this.anchor.setTo(0.5);
-        this.row = row;
-        this.col = col;
+    this.tag = spriteName || this.frameName;
 
-        // this.height = BubbleShoot.UI.bubble.size;
-        // this.width = BubbleShoot.UI.bubble.size;
+    this.scale.setTo(UI.bubble.scale);
+    this.anchor.setTo(0.5);
+    this.row = row;
+    this.col = col;
 
-        this.radius = BubbleShoot.UI.bubble.radius;
-    }
+    // this.height = UI.bubble.size;
+    // this.width = UI.bubble.size;
 
+    this.radius = UI.bubble.radius;
+}
+
+if (self.Phaser) {
     Bubble.prototype = Object.create(Phaser.Sprite.prototype);
     Bubble.prototype.constructor = Bubble;
+}
 
-    Bubble.prototype.getGridByPosition = function(position) 
-    {
-        var topSide = this.player.side == BubbleShoot.PLAYER_SIDE_TOP; 
-        var board = this.player.board;
-        var position = position || this.position;
+Bubble.prototype.getGridByPosition = function(position) 
+{
+    var topSide = this.player.side == BubbleShooter.PLAYER_SIDE_TOP; 
+    var board = this.player.board;
+    var position = position || this.position;
 
-        var row = Math.floor( (position.y - board.y) / BubbleShoot.UI.board.rowHeight);
+    var row = Math.floor( (position.y - board.y) / UI.board.rowHeight);
 
-        if (topSide) {
-            var row = Math.floor( (board.height - position.y) / BubbleShoot.UI.board.rowHeight);
-        }
-
-        var marginLeft = row % 2 == 0 ? BubbleShoot.UI.bubble.radius : BubbleShoot.UI.bubble.radius * 2; 
-        var col = (position.x - board.x + marginLeft) / BubbleShoot.UI.bubble.size;
-
-        col = Math.round(col);
-
-        if (col > BubbleShoot.UI.maxCols) {
-            col = BubbleShoot.UI.maxCols;
-        }
-
-        if(row % 2 == 1) {
-            col -= 2;
-        }
-        if(row % 2 == 0) {
-            col -= 1;
-        }
-
-        return { row : row, col : col };
+    if (topSide) {
+        var row = Math.floor( (board.height - position.y) / UI.board.rowHeight);
     }
 
-    Bubble.prototype.fixGridByPosition = function(position) 
-    {
-        var grid = this.getGridByPosition(position);
-        this.row = grid.row;
-        this.col = grid.col;
+    var marginLeft = row % 2 == 0 ? UI.bubble.radius : UI.bubble.radius * 2; 
+    var col = (position.x - board.x + marginLeft) / UI.bubble.size;
 
-        if (BubbleShoot.debug) {
-            console.log('fixGridByPosition', this.player.id, position, grid);
-        }
+    col = Math.round(col);
+
+    if (col > UI.maxCols) {
+        col = UI.maxCols;
+    }
+
+    if(row % 2 == 1) {
+        col -= 2;
+    }
+    if(row % 2 == 0) {
+        col -= 1;
+    }
+
+    return { row : row, col : col };
+}
+
+Bubble.prototype.fixGridByPosition = function(position) 
+{
+    var grid = this.getGridByPosition(position);
+    this.row = grid.row;
+    this.col = grid.col;
+
+    if (BubbleShooter.debug) {
+        console.log('fixGridByPosition', this.player.id, position, grid);
+    }
+} 
+
+Bubble.prototype.getPositionByGrid = function(grid) 
+{
+    var grid = grid || {row : this.row, col : this.col};
+
+    if (grid.row === undefined || grid.col === undefined) {
+        console.error('getPositionByGrid', grid.row, grid.col);
+        return false;
+    }
+
+    var topSide = this.player.side == BubbleShooter.PLAYER_SIDE_TOP;
+    var x = this.player.board.x;
+    var y = this.player.board.y; 
+
+    if (grid.row % 2 == 0) {
+        x += UI.bubble.radius;
+    } else {
+        x += UI.bubble.radius * 2;
+    }
+
+    if (topSide) {
+        y += this.player.board.height;
+        y -= grid.row * UI.board.rowHeight;
+        y -= UI.bubble.radius;
+    } else {
+        y += grid.row  * UI.board.rowHeight;
+        y += UI.bubble.radius;
+    }                                      
+
+    return { x : x + (grid.col * UI.bubble.size), y : y};
+} 
+
+Bubble.prototype.fixPositionByGrid = function(grid) 
+{
+    var position = this.getPositionByGrid(grid);
+    this.position.setTo(position.x, position.y);
+
+    this.createDebugText();
+} 
+
+Bubble.prototype.move = function(steps, done, attach) 
+{
+    if (false === Array.isArray(steps)) {
+        return console.error('invalid parameters, expected Array of steps');
     } 
 
-    Bubble.prototype.getPositionByGrid = function(grid) 
-    {
-        var grid = grid || {row : this.row, col : this.col};
+    this.state = BubbleShooter.BUBBLE_STATE_FIRING;
+    var attach = attach == undefined ? true : attach;
+    var throwAnim = BubbleShooter.game.add.tween(this);
 
-        if (grid.row === undefined || grid.col === undefined) {
-            console.error('getPositionByGrid', grid.row, grid.col);
-            return false;
-        }
+    steps.forEach(function(step) {
+        throwAnim.to({x : step.position.x, y: step.position.y}, step.duration);
+    });
 
-        var topSide = this.player.side == BubbleShoot.PLAYER_SIDE_TOP;
-        var x = this.player.board.x;
-        var y = this.player.board.y; 
+    if (attach) {
+        var position = steps.pop().position;
+        this.fixGridByPosition(position);
+        this.player.board.addBubble(this);
+        this._endPosition = this.getPositionByGrid();
+    }
 
-        if (grid.row % 2 == 0) {
-            x += BubbleShoot.UI.bubble.radius;
-        } else {
-            x += BubbleShoot.UI.bubble.radius * 2;
-        }
-
-        if (topSide) {
-            y += this.player.board.height;
-            y -= grid.row * BubbleShoot.UI.board.rowHeight;
-            y -= BubbleShoot.UI.bubble.radius;
-        } else {
-            y += grid.row  * BubbleShoot.UI.board.rowHeight;
-            y += BubbleShoot.UI.bubble.radius;
-        }                                      
-
-        return { x : x + (grid.col * BubbleShoot.UI.bubble.size), y : y};
-    } 
-
-    Bubble.prototype.fixPositionByGrid = function(grid) 
-    {
-        var position = this.getPositionByGrid(grid);
-        this.position.setTo(position.x, position.y);
-
-        this.createDebugText();
-    } 
-
-    Bubble.prototype.move = function(steps, done, attach) 
-    {
-        if (false === Array.isArray(steps)) {
-            return console.error('invalid parameters, expected Array of steps');
-        } 
-
-        this.state = BubbleShoot.BUBBLE_STATE_FIRING;
-        var attach = attach == undefined ? true : attach;
-        var throwAnim = BubbleShoot.game.add.tween(this);
-
-        steps.forEach(function(step) {
-            throwAnim.to({x : step.position.x, y: step.position.y}, step.duration);
-        });
+    throwAnim.onComplete.add(function() {
 
         if (attach) {
-            var position = steps.pop().position;
-            this.fixGridByPosition(position);
-            this.player.board.addBubble(this);
-            this._endPosition = this.getPositionByGrid();
+            this.state = BubbleShooter.BUBBLE_STATE_ON_BOARD;
+            this.fixPositionByGrid();
+            delete this._endPosition;
         }
+        if (done) {
+            done(this);
+        }
+    }.bind(this));
 
-        throwAnim.onComplete.add(function() {
+    throwAnim.start();
+}
 
-            if (attach) {
-                this.state = BubbleShoot.BUBBLE_STATE_ON_BOARD;
-                this.fixPositionByGrid();
-                delete this._endPosition;
-            }
-            if (done) {
-                done(this);
-            }
-        }.bind(this));
+Bubble.prototype.getMetaData = function()
+{
+    return {
+        tag: this.tag,
+        radius: this.radius,
+        row: this.row,
+        col: this.col,
+        x: this.x,
+        y: this.y,
+        position : {
+            x : this.x,
+            y : this.y,
+        },
+        _endPosition : this._endPosition,
+        state : this.state,
+    }
+}
 
-        throwAnim.start();
+Bubble.prototype.createDebugText = function() 
+{
+    if (!BubbleShooter.debug) {
+        return false;
     }
 
-    Bubble.prototype.getMetaData = function()
-    {
-        return {
-            tag: this.tag,
-            radius: this.radius,
-            row: this.row,
-            col: this.col,
-            x: this.x,
-            y: this.y,
-            position : {
-                x : this.x,
-                y : this.y,
-            },
-            _endPosition : this._endPosition,
-            state : this.state,
-        }
+    if (!this.debugText) {
+        var style = { font: "50px Arial", fill: "#000" };  
+        var text = BubbleShooter.game.add.text(0, 0, '', style);
+        text.anchor.setTo(0.5);
+        this.addChild(text);
+        this.debugText = text;
     }
 
-    Bubble.prototype.createDebugText = function() 
-    {
-        if (!BubbleShoot.debug) {
-            return false;
-        }
-
-        if (!this.debugText) {
-            var style = { font: "50px Arial", fill: "#000" };  
-            var text = BubbleShoot.game.add.text(0, 0, '', style);
-            text.anchor.setTo(0.5);
-            this.addChild(text);
-            this.debugText = text;
-        }
-
-        if (this.row == undefined || this.col == undefined) {
-            return this.debugText.setText('');
-        }
-
-        this.debugText.setText(String(this.row) + ' - ' + String(this.col));
+    if (this.row == undefined || this.col == undefined) {
+        return this.debugText.setText('');
     }
 
-    Bubble.RADIUS = 177/2 //189/2;
-    Bubble.SIZE = Bubble.RADIUS * 2;
+    this.debugText.setText(String(this.row) + ' - ' + String(this.col));
+}
 
-    Bubble.create = function(player, row, col, spriteName)
-    {
-        var bubble = BubbleShoot.entities.bubbles.getFirstDead(); 
-        var spriteName = spriteName || Bubble.getRandomSprite();
+Bubble.create = function(player, row, col, spriteName)
+{
+    var bubble = BubbleShooter.entities.bubbles.getFirstDead(); 
+    var spriteName = spriteName || Bubble.getRandomSprite();
 
-        if (bubble) {
-            bubble.revive();
-            bubble.row = row;
-            bubble.col = col;
-            bubble.frameName = spriteName;
-            bubble.tag = spriteName;
-            bubble.scale.setTo(BubbleShoot.UI.bubble.scale);
-            bubble.player = player;
-        }
-
-        if (!bubble) {
-            bubble = new Bubble(player, row, col, spriteName);
-        } 
-
-        bubble.createDebugText();
-
-        return bubble;
+    if (bubble) {
+        bubble.revive();
+        bubble.row = row;
+        bubble.col = col;
+        bubble.frameName = spriteName;
+        bubble.tag = spriteName;
+        bubble.scale.setTo(UI.bubble.scale);
+        bubble.player = player;
     }
 
-    Bubble.getRandomSprite = function()
-    {
-        return spriteNames[Utils.getRandomInt(0, spriteNames.length - 1)];
+    if (!bubble) {
+        bubble = new Bubble(player, row, col, spriteName);
     } 
 
-    exports.Bubble = Bubble;
+    bubble.createDebugText();
 
-})(BubbleShoot);
+    return bubble;
+}
+
+Bubble.getRandomSprite = function()
+{
+    return spriteNames[Utils.getRandomInt(0, spriteNames.length - 1)];
+} 
+
+module.exports = Bubble;

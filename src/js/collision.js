@@ -1,203 +1,201 @@
-;(function(exports) {
+var BubbleShooter = require('./bubble-shooter.js');
+var UI = require('./ui.js');
 
-    var Collision = {
+var Collision = {
 
-        config : {
-            gameWidth : 0,
-            bubbleRadius : 0,
-            trajectory : {
-                distance : 0,
-                duration : 600,
-            } 
-        },
+    config : {
+        bubbleRadius : UI.bubble.radius,
+        trajectory : {
+            distance : UI.bubble.radius/5,
+            duration : 600,
+        } 
+    },
 
-        circleCollision : function(circleFirst, circleSecond, cutback) 
-        {
-            var distance = this.circleCollisionDistance(circleFirst.position, circleSecond.position);
-            var radius = circleFirst.radius + circleSecond.radius;
+    circleCollision : function(circleFirst, circleSecond, cutback) 
+    {
+        var distance = this.circleCollisionDistance(circleFirst.position, circleSecond.position);
+        var radius = circleFirst.radius + circleSecond.radius;
 
-            if (cutback) {
-                radius -= (circleFirst.radius * cutback) + (circleSecond.radius * cutback);
+        if (cutback) {
+            radius -= (circleFirst.radius * cutback) + (circleSecond.radius * cutback);
+        }
+        return distance < radius;
+    }, 
+
+    circleCollisionDistance : function(circleFirst, circleSecond) 
+    {
+        var dx = circleFirst.x - circleSecond.x;
+        var dy = circleFirst.y - circleSecond.y;
+        return Math.sqrt(dx * dx + dy * dy);
+    }, 
+
+    bubbleIntersection : function(bubble, grid) {
+
+        for (var row = 0; row < grid.length; row++) {
+
+            var cols = grid[row];
+
+            if (!cols) {
+                continue;
             }
-            return distance < radius;
-        }, 
 
-        circleCollisionDistance : function(circleFirst, circleSecond) 
-        {
-            var dx = circleFirst.x - circleSecond.x;
-            var dy = circleFirst.y - circleSecond.y;
-            return Math.sqrt(dx * dx + dy * dy);
-        }, 
+            for (var col = 0; col < cols.length; col++) {
 
-        bubbleIntersection : function(bubble, grid) {
+                var curBubble = cols[col];
 
-            for (var row = 0; row < grid.length; row++) {
-
-                var cols = grid[row];
-
-                if (!cols) {
+                if (!curBubble) {
                     continue;
                 }
 
-                for (var col = 0; col < cols.length; col++) {
+                var curBubblePosition = curBubble.position;
+                if (curBubble.state == BubbleShooter.BUBBLE_STATE_FIRING) {
+                    curBubblePosition = curBubble._endPosition;
+                }
 
-                    var curBubble = cols[col];
+                var collision = Collision.circleCollision(
+                    { position: bubble.position, radius: bubble.radius}, 
+                    { position: curBubblePosition, radius: curBubble.radius}, 
+                    0.1
+                );
 
-                    if (!curBubble) {
-                        continue;
-                    }
-
-                    var curBubblePosition = curBubble.position;
-                    if (curBubble.state == BubbleShoot.BUBBLE_STATE_FIRING) {
-                        curBubblePosition = curBubble._endPosition;
-                    }
-
-                    var collision = Collision.circleCollision(
-                        { position: bubble.position, radius: bubble.radius}, 
-                        { position: curBubblePosition, radius: curBubble.radius}, 
-                        0.1
-                    );
-
-                    if (collision) {
-                        return curBubble;
-                    }
+                if (collision) {
+                    return curBubble;
                 }
             }
-
-            return false; 
-        },
-
-    }; 
-
-    // module trajectory
-    ;(function(exports) {
-
-        // step distance/duration
-
-        function step(position, dx, dy, board, stepIteration) {
-
-            var safeLimit = 2000;
-            var radius = Collision.config.bubbleRadius;
-
-            var topSide = board.side == BubbleShoot.PLAYER_SIDE_TOP;
-
-            var limitRight = board.x + board.width - radius;
-            var limitLeft = board.x + radius;
-
-            var limitTop = board.y + radius;
-
-            if (topSide) {
-                limitTop = board.y + board.height - radius;
-            }
-
-            var stepIteration = stepIteration ? ++stepIteration : 1;
-
-            var collideWorldBounds = false;
-            var bubbleCollision = false;
-
-            position.x += dx;
-            position.y -= dy;
-
-            // top wall 
-            if (!topSide && position.y <= limitTop) {
-                position.y = limitTop;
-                collideWorldBounds = 'top';
-            }
-
-            if (topSide && position.y >= limitTop) {
-                position.y = limitTop;
-                collideWorldBounds = 'top';
-            }
-
-            // left wall
-            if (position.x <= limitLeft) {
-                position.x = limitLeft;
-                collideWorldBounds = 'left';
-            }
-
-            // right wall
-            if (position.x >= limitRight) {
-                position.x = limitRight;
-                collideWorldBounds = 'right';
-            }
-
-            // bug?
-            if (stepIteration > safeLimit) {
-                console.error('Collision.Trajectory.step atingiu limit de iteracoes');
-                return position;
-            }
-
-            bubbleCollision = Collision.bubbleIntersection(
-                {position: position, radius : Collision.config.bubbleRadius}, board.grid
-            );
-
-            if (collideWorldBounds || bubbleCollision) {
-
-                var distToCollision = stepIteration * Collision.config.trajectory.distance;
-                // var duration = Math.round( Collision.config.trajectory.duration * distToCollision / 1000);
-
-                var speed = 1500;
-                var delta = 1000;
-                var duration = Math.round(distToCollision / speed * delta);
-
-                return { 
-                    position : { x: position.x, y: position.y },
-                    duration : duration,
-
-                    collision : {
-                        dist : distToCollision,
-                        worldBounds : collideWorldBounds,
-                        bubble : bubbleCollision,
-                    }
-                };
-            }
-
-            return step(position, dx, dy, board, stepIteration); 
         }
 
-        function trajectory(bubble, angle, board)
-        {
-            var steps = [];
+        return false; 
+    },
 
-            var position = { x: bubble.x, y: bubble.y };
-            var safeLimit = 2000;
-            var dx = Math.sin(angle) * Collision.config.trajectory.distance;
-            var dy = Math.cos(angle) * Collision.config.trajectory.distance;
+}; 
 
-            var steps = [];
-            var iteration = 0;
+// module trajectory
+;(function(exports) {
 
-            while(true) {
+    // step distance/duration
 
-                iteration++;
+    function step(position, dx, dy, board, stepIteration) {
 
-                var currentStep = step(position, dx, dy, board);
+        var safeLimit = 2000;
+        var radius = Collision.config.bubbleRadius;
 
-                if (currentStep.collision.worldBounds) {
-                    dx *= -1;
+        var topSide = board.side == BubbleShooter.PLAYER_SIDE_TOP;
+
+        var limitRight = board.x + board.width - radius;
+        var limitLeft = board.x + radius;
+
+        var limitTop = board.y + radius;
+
+        if (topSide) {
+            limitTop = board.y + board.height - radius;
+        }
+
+        var stepIteration = stepIteration ? ++stepIteration : 1;
+
+        var collideWorldBounds = false;
+        var bubbleCollision = false;
+
+        position.x += dx;
+        position.y -= dy;
+
+        // top wall 
+        if (!topSide && position.y <= limitTop) {
+            position.y = limitTop;
+            collideWorldBounds = 'top';
+        }
+
+        if (topSide && position.y >= limitTop) {
+            position.y = limitTop;
+            collideWorldBounds = 'top';
+        }
+
+        // left wall
+        if (position.x <= limitLeft) {
+            position.x = limitLeft;
+            collideWorldBounds = 'left';
+        }
+
+        // right wall
+        if (position.x >= limitRight) {
+            position.x = limitRight;
+            collideWorldBounds = 'right';
+        }
+
+        // bug?
+        if (stepIteration > safeLimit) {
+            console.error('Collision.Trajectory.step atingiu limit de iteracoes');
+            return position;
+        }
+
+        bubbleCollision = Collision.bubbleIntersection(
+            {position: position, radius : Collision.config.bubbleRadius}, board.grid
+        );
+
+        if (collideWorldBounds || bubbleCollision) {
+
+            var distToCollision = stepIteration * Collision.config.trajectory.distance;
+            // var duration = Math.round( Collision.config.trajectory.duration * distToCollision / 1000);
+
+            var speed = 1500;
+            var delta = 1000;
+            var duration = Math.round(distToCollision / speed * delta);
+
+            return { 
+                position : { x: position.x, y: position.y },
+                duration : duration,
+
+                collision : {
+                    dist : distToCollision,
+                    worldBounds : collideWorldBounds,
+                    bubble : bubbleCollision,
                 }
+            };
+        }
 
-                currentStep.angle = angle;
-                steps.push(currentStep);
+        return step(position, dx, dy, board, stepIteration); 
+    }
 
-                if (iteration > safeLimit) {
-                    console.error('while limit');
-                    break;
-                }
+    function trajectory(bubble, angle, board)
+    {
+        var steps = [];
 
-                if (!currentStep || currentStep.collision.bubble || currentStep.collision.worldBounds == 'top') {
-                    break;
-                }
+        var position = { x: bubble.x, y: bubble.y };
+        var safeLimit = 2000;
+        var dx = Math.sin(angle) * Collision.config.trajectory.distance;
+        var dy = Math.cos(angle) * Collision.config.trajectory.distance;
 
+        var steps = [];
+        var iteration = 0;
+
+        while(true) {
+
+            iteration++;
+
+            var currentStep = step(position, dx, dy, board);
+
+            if (currentStep.collision.worldBounds) {
+                dx *= -1;
             }
 
-            return steps;
-        }
-            
-        exports.trajectory = trajectory;
-    
-    })(Collision);
-    
-    exports.Collision = Collision;
+            currentStep.angle = angle;
+            steps.push(currentStep);
 
-})(BubbleShoot);
+            if (iteration > safeLimit) {
+                console.error('while limit');
+                break;
+            }
+
+            if (!currentStep || currentStep.collision.bubble || currentStep.collision.worldBounds == 'top') {
+                break;
+            }
+
+        }
+
+        return steps;
+    }
+
+    exports.trajectory = trajectory;
+
+})(Collision);
+
+module.exports = Collision;

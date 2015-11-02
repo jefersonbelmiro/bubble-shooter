@@ -1,73 +1,73 @@
-;(function(exports) { 
+var BubbleShooter = require('./bubble-shooter.js');
+var Shooter = require('./shooter.js');
+var Board = require('./board.js');
 
-    function Player(id, side) {
+function Player(id, side) {
 
-        this.id = id;
-        this.side = side;
-        this.shooter = new BubbleShoot.Shooter(this);
-        this.board = new BubbleShoot.Board(this);
-    }
+    this.id = id;
+    this.side = side;
+    this.shooter = new Shooter(this);
+    this.board = new Board(this);
+}
 
-    Player.prototype = {
+Player.prototype = {
 
-        getMetaData : function() 
+    getMetaData : function() 
+    {
+        return {
+            id : this.id,
+            side : this.side,
+            shooter : this.shooter.getMetaData(),
+            board : this.board.getMetaData(), 
+        }
+    },
+
+    fire : function(done, trajectory) 
+    {
+        var fire = function(bubble)
         {
-            return {
-                id : this.id,
-                side : this.side,
-                shooter : this.shooter.getMetaData(),
-                board : this.board.getMetaData(), 
+            var win = false, lose = false;
+
+            // lose
+            if ( (this.side == BubbleShooter.PLAYER_SIDE_BOTTOM && 
+            bubble.y + bubble.radius > this.shooter.y - this.shooter.height/2) || 
+            (this.side == BubbleShooter.PLAYER_SIDE_TOP && 
+            bubble.y - bubble.radius < this.shooter.y + this.shooter.height/2)
+            ) {
+                lose = true;
             }
-        },
 
-        fire : function(done, trajectory) 
-        {
-            var fire = function(bubble)
-            {
-                var win = false, lose = false;
+            if (!lose) {
+                this.board.checkMatches(bubble);
+                this.board.checkOrphans();
 
-                // lose
-                if ( (this.side == BubbleShoot.PLAYER_SIDE_BOTTOM && 
-                      bubble.y + bubble.radius > this.shooter.y - this.shooter.height/2) || 
-                     (this.side == BubbleShoot.PLAYER_SIDE_TOP && 
-                      bubble.y - bubble.radius < this.shooter.y + this.shooter.height/2)
-                   ) {
-                   lose = true;
-                }
-                    
-                if (!lose) {
-                    this.board.checkMatches(bubble);
-                    this.board.checkOrphans();
+                var remaining = this.board.getRemaining();
 
-                    var remaining = this.board.getRemaining();
+                // win
+                if (remaining.length == 0) {
+                    win = true;
+                } 
+            }
 
-                    // win
-                    if (remaining.length == 0) {
-                        win = true;
-                    } 
-                }
+            if (win) {
+                BubbleShooter.CurrenteState.finish(this);
+            }
+            if (lose) {
+                BubbleShooter.CurrenteState.finish(this.enemy);
+            }
 
-                if (win) {
-                    BubbleShoot.CurrenteState.finish(this);
-                }
-                if (lose) {
-                    BubbleShoot.CurrenteState.finish(this.enemy);
-                }
-
-                // @mover essa logica para o server
-                // if (!win && !lose) {
-                    // this.shooter._nextLoaded.push(this.board.getNextBubbleTag(remaining));
+            // @mover essa logica para o server
+            // if (!win && !lose) {
+                // this.shooter._nextLoaded.push(this.board.getNextBubbleTag(remaining));
                 // }
 
                 if (done) {
                     done();
                 } 
-            }
-            var fired = this.shooter.fire(fire.bind(this), trajectory);
-            // this.shooter.reload();
-        },
-    }
+        }
+        var fired = this.shooter.fire(fire.bind(this), trajectory);
+        // this.shooter.reload();
+    },
+}
 
-    exports.Player = Player;
-
-})(BubbleShoot);
+module.exports = Player;

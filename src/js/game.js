@@ -1,410 +1,395 @@
-;(function(global) {
+var BubbleShooter = require('./bubble-shooter.js');
+var Utils = require('./utils.js');
+var UI = require('./ui.js');
+var AI = require('./ai.js');
+var Bubble = require('./bubble.js');
+var Player = require('./player.js');
+var fpsText;
 
-    'use strict';
+var Game = function(_game) {
+    this.game = _game;
+}    
 
-    var fpsText;
+var _enemyQueue = [];
 
-    var Game = function(_game) {
-        this.game = _game;
-    }    
+function _nextTick(fn)
+{
+    return setTimeout(fn, 16.666);
+}
 
-    var _enemyQueue = [];
+BubbleShooter.nextTick = _nextTick;
 
-    function _nextTick(fn)
-    {
-        return setTimeout(fn, 16.666);
+function _processEnemyQueue() 
+{
+    var player = BubbleShooter.enemy;
+
+    if (player.shooter._loading) {
+        return _nextTick(_processEnemyQueue);
     }
 
-    BubbleShoot.nextTick = _nextTick;
+    var data = _enemyQueue.shift();
 
-    function _processEnemyQueue() 
-    {
-        var player = BubbleShoot.enemy;
-
-        if (player.shooter._loading) {
-            return _nextTick(_processEnemyQueue);
-        }
-
-        var data = _enemyQueue.shift();
-
-        if (!data) {
-            return false;
-        }
-
-        if (!player.shooter.bubble) {
-            console.error('1]_processEnemyQueue', data.tag);
-            // player.shooter.reload(true, data.tag);
-        }
-
-        if (player.shooter.bubble.tag != data.tag) {
-            player.shooter.bubble.tag = data.tag;
-            player.shooter.bubble.frameName = data.tag;
-            console.error('2]_processEnemyQueue', player.shooter.bubble.tag, data.tag);
-        }
-
-        console.log('fire', player.shooter.bubble.tag);
-
-        player.shooter.angle = 180 - data.angle;
-        player.fire();
-        player.shooter.reload();
-
-        return true;
+    if (!data) {
+        return false;
     }
 
-    Game.prototype = {
+    if (!player.shooter.bubble) {
+        console.error('1]_processEnemyQueue', data.tag);
+        // player.shooter.reload(true, data.tag);
+    }
 
-        create: function() 
-        {
-            BubbleShoot.CurrenteState = this;
-            BubbleShoot.state = 'stated';
-            BubbleShoot.finishedByServer = false;
-                
-            var backgroundData = {
-                width : BubbleShoot.game.cache.getFrame('background').width,
-                height : BubbleShoot.game.cache.getFrame('background').height,
+    if (player.shooter.bubble.tag != data.tag) {
+        console.error('2]_processEnemyQueue', player.shooter.bubble.tag, data.tag);
+        player.shooter.bubble.tag = data.tag;
+        player.shooter.bubble.frameName = data.tag;
+    }
+
+    console.log('fire', player.shooter.bubble.tag);
+
+    player.shooter.angle = 180 - data.angle;
+    player.fire();
+    player.shooter.reload();
+
+    return true;
+}
+
+Game.prototype = {
+
+    create: function() 
+    {
+        BubbleShooter.CurrenteState = this;
+        BubbleShooter.state = 'stated';
+        BubbleShooter.finishedByServer = false;
+
+        var backgroundData = {
+            width : BubbleShooter.game.cache.getFrame('background').width,
+            height : BubbleShooter.game.cache.getFrame('background').height,
+        }
+
+        var scaleHeight = BubbleShooter.game.height / backgroundData.height;
+        var scaleWidth = BubbleShooter.game.width / backgroundData.width;
+        var background = this.game.add.tileSprite(0, 0, backgroundData.width, backgroundData.height, "background");
+        background.scale.setTo(scaleWidth, scaleHeight);
+
+        this.game.stage.disableVisibilityChange = true;
+
+        this.game.time.advancedTiming = true;
+        fpsText = this.game.add.text(0, 5, '00', {font: '16px Arial', fill: '#000'});
+        // fpsText.x = this.game.width - fpsText.width - 5;
+        fpsText.x = 5;
+        this.latency = 0;
+
+        BubbleShooter.entities = BubbleShooter.game.add.group();
+
+        var bubblesGroup = BubbleShooter.game.add.group();
+        // bubblesGroup.enableBody = true;
+
+        BubbleShooter.entities.add(bubblesGroup);
+        BubbleShooter.entities.bubbles = bubblesGroup;
+
+        BubbleShooter.separator = BubbleShooter.entities.create(
+            0, BubbleShooter.game.world.centerY, 
+            Utils.createRect(UI.board.width, UI.board.separatorHeight, '#333')
+        );
+        BubbleShooter.separator.anchor.setTo(0, 0.5);
+
+        if (BubbleShooter.game.width > BubbleShooter.separator.width) {
+            BubbleShooter.separator.x = (BubbleShooter.game.width - BubbleShooter.separator.width)/2;
+        } 
+
+        this.createPlayers(this.attachEvents);
+
+        BubbleShooter.entities.bringToTop(BubbleShooter.entities.bubbles);
+    },
+
+    createPlayers : function(done)
+    {
+
+        if (BubbleShooter.mode == BubbleShooter.MODES.SINGLEPLAYER) {
+
+            BubbleShooter.player = new Player('You', BubbleShooter.PLAYER_SIDE_BOTTOM);
+            BubbleShooter.enemy = new Player('Computer', BubbleShooter.PLAYER_SIDE_TOP);
+
+            var maxRows = Math.round(UI.maxRows/3) + 1; 
+            var maxCols = UI.maxCols; 
+
+            if (BubbleShooter.debug) {
+
+                var playerGrid = BubbleShooter.player.board.createGrid(maxRows, maxCols).slice(0);
+                BubbleShooter.player.board.setGrid(playerGrid.slice(0));
+                BubbleShooter.enemy.board.setGrid(playerGrid.slice(0)); 
+            } else {
+
+                BubbleShooter.player.board.setGrid(BubbleShooter.player.board.createGrid(maxRows, maxCols));
+                BubbleShooter.enemy.board.setGrid(BubbleShooter.enemy.board.createGrid(maxRows, maxCols));
             }
 
-            var scaleHeight = BubbleShoot.game.height / backgroundData.height;
-            var scaleWidth = BubbleShoot.game.width / backgroundData.width;
-            var background = this.game.add.tileSprite(0, 0, backgroundData.width, backgroundData.height, "background");
-            background.scale.setTo(scaleWidth, scaleHeight);
+            BubbleShooter.player.board.create();
+            BubbleShooter.enemy.board.create();
 
-            console.log(scaleHeight, scaleWidth);
+            if (false == BubbleShooter.debug) {
+                BubbleShooter.player.shooter.load(Bubble.getRandomSprite());
+                BubbleShooter.enemy.shooter.load(Bubble.getRandomSprite());
+            }
 
-            this.game.stage.disableVisibilityChange = true;
+            var bubbleTag = BubbleShooter.debug ? Bubble.getRandomSprite() : null;
+            BubbleShooter.player.shooter.reload(true, bubbleTag);
+            BubbleShooter.enemy.shooter.reload(true, bubbleTag);
 
-            this.game.time.advancedTiming = true;
-            fpsText = this.game.add.text(0, 5, '00', {font: '16px Arial', fill: '#000'});
-            // fpsText.x = this.game.width - fpsText.width - 5;
-            fpsText.x = 5;
-            this.latency = 0;
+            if (false == BubbleShooter.debug) {
+                BubbleShooter.computer = new AI(BubbleShooter.enemy);
+            }
 
-            BubbleShoot.entities = BubbleShoot.game.add.group();
+            BubbleShooter.player.enemy = BubbleShooter.enemy;
+            BubbleShooter.enemy.enemy = BubbleShooter.player;
 
-            var bubblesGroup = BubbleShoot.game.add.group();
-            bubblesGroup.enableBody = true;
+            return done.call(this);
+        }
 
-            BubbleShoot.entities.add(bubblesGroup);
-            BubbleShoot.entities.bubbles = bubblesGroup;
+        if (BubbleShooter.mode == BubbleShooter.MODES.MULTIPLAYER) {
 
-            BubbleShoot.separator = BubbleShoot.entities.create(
-                0, BubbleShoot.game.world.centerY, 
-                Utils.createRect(BubbleShoot.UI.board.width, BubbleShoot.UI.board.separatorHeight)
-            );
-            BubbleShoot.separator.anchor.setTo(0, 0.5);
+            var _this = this;
+            BubbleShooter.server.removeAllListeners();
+            BubbleShooter.server.on('player-fire', function(data) {
 
-            this.createPlayers(function() {
-                this.configureCollision();
-                this.attachEvents();
+                BubbleShooter.enemy.shooter.load(data.load);
+
+                _enemyQueue.push(data);
+                _processEnemyQueue();
+
+                // BubbleShooter.enemy.shooter.angle = 180 - data.angle;
+                // BubbleShooter.enemy.fire();
             });
 
-            BubbleShoot.entities.bringToTop(BubbleShoot.entities.bubbles);
-        },
+            BubbleShooter.server.on('finish', function(winnerID) {
 
-        createPlayers : function(done)
-        {
+                BubbleShooter.finishedByServer = true;
 
-            if (BubbleShoot.mode == BubbleShoot.MODES.SINGLEPLAYER) {
-
-                BubbleShoot.player = new BubbleShoot.Player('You', BubbleShoot.PLAYER_SIDE_BOTTOM);
-                BubbleShoot.enemy = new BubbleShoot.Player('Computer', BubbleShoot.PLAYER_SIDE_TOP);
-
-                var maxRows = Math.round(BubbleShoot.UI.maxRows/3) + 1; 
-                var maxCols = BubbleShoot.UI.maxCols; 
-
-                if (BubbleShoot.debug) {
-
-                    var playerGrid = BubbleShoot.player.board.createGrid(maxRows, maxCols).slice(0);
-                    BubbleShoot.player.board.setGrid(playerGrid.slice(0));
-                    BubbleShoot.enemy.board.setGrid(playerGrid.slice(0)); 
+                console.log('finish: ', winnerID);
+                if (winnerID == BubbleShooter.player.id) {
+                    _this.finish(BubbleShooter.player);
                 } else {
+                    _this.finish(BubbleShooter.enemy);
+                }
+            });
 
-                    BubbleShoot.player.board.setGrid(BubbleShoot.player.board.createGrid(maxRows, maxCols));
-                    BubbleShoot.enemy.board.setGrid(BubbleShoot.enemy.board.createGrid(maxRows, maxCols));
+            // @todo - change player/enemy to p1/p2
+            var room = BubbleShooter.room;
+            var p1 = room.players[0];
+            var p2 = room.players[1];
+
+            if (BubbleShooter.nickname == p2.id) {
+
+                BubbleShooter.player = new Player(p2.id, BubbleShooter.PLAYER_SIDE_BOTTOM);
+                BubbleShooter.enemy = new Player(p1.id, BubbleShooter.PLAYER_SIDE_TOP);
+
+                BubbleShooter.player.board.setGrid(p2.grid);
+                BubbleShooter.enemy.board.setGrid(p1.grid);
+
+                BubbleShooter.player.shooter.load(p2.bubbles);
+                BubbleShooter.enemy.shooter.load(p1.bubbles);
+
+            } else {
+
+                BubbleShooter.player = new Player(p1.id, BubbleShooter.PLAYER_SIDE_BOTTOM);
+                BubbleShooter.enemy = new Player(p2.id, BubbleShooter.PLAYER_SIDE_TOP);
+
+                BubbleShooter.player.board.setGrid(p1.grid);
+                BubbleShooter.enemy.board.setGrid(p2.grid);
+
+                BubbleShooter.player.shooter.load(p1.bubbles);
+                BubbleShooter.enemy.shooter.load(p2.bubbles);
+            } 
+
+            BubbleShooter.player.board.create();
+            BubbleShooter.enemy.board.create();
+
+            BubbleShooter.player.shooter.reload(true);
+            BubbleShooter.enemy.shooter.reload(true);
+
+            BubbleShooter.player.enemy = BubbleShooter.enemy;
+            BubbleShooter.enemy.enemy = BubbleShooter.player;
+
+            ;(function getLatency() {
+
+                var updateLatency = function(latency) {
+                    _this.latency = latency;
+                    getLatency();
                 }
 
-                BubbleShoot.player.board.create();
-                BubbleShoot.enemy.board.create();
+                setTimeout(function() {
+                    BubbleShooter.server.ping(updateLatency)
+                }, 2000); 
+            })();
 
-                if (false == BubbleShoot.debug) {
-                    BubbleShoot.player.shooter.load(BubbleShoot.Bubble.getRandomSprite());
-                    BubbleShoot.enemy.shooter.load(BubbleShoot.Bubble.getRandomSprite());
-                }
+            return done.call(this);
+        }
+    },
 
-                var bubbleTag = BubbleShoot.debug ? BubbleShoot.Bubble.getRandomSprite() : null;
-                BubbleShoot.player.shooter.reload(true, bubbleTag);
-                BubbleShoot.enemy.shooter.reload(true, bubbleTag);
+    attachEvents : function() 
+    {
+        this.game.input.addMoveCallback(this.inputMove, this);
+        this.game.input.onUp.add(this.inputUp, this);
+        this.game.canvas.style.cursor = 'crosshair';
+    },
 
-                if (false == BubbleShoot.debug) {
-                    BubbleShoot.computer = new BubbleShoot.AI(BubbleShoot.enemy);
-                }
+    detachEvents : function()
+    {
+        this.game.input.deleteMoveCallback(this.inputMove, this);
+        this.game.input.onUp.remove(this.inputUp, this);
+        this.game.canvas.style.cursor = 'default';
+    },
 
-                BubbleShoot.player.enemy = BubbleShoot.enemy;
-                BubbleShoot.enemy.enemy = BubbleShoot.player;
+    update : function() 
+    {
+        fpsText.setText(this.time.fps + ' | ' + this.latency);
+    },
 
-                return done.call(this);
-            }
-
-            if (BubbleShoot.mode == BubbleShoot.MODES.MULTIPLAYER) {
-                
-                // BubbleShoot._queue = { player: [], enemy : []};
-                var _this = this;
-                BubbleShoot.server.removeAllListeners();
-                BubbleShoot.server.on('player-fire', function(data) {
-
-                    // BubbleShoot._queue.enemy.push(data);
-
-                    BubbleShoot.enemy.shooter.load(data.load);
-
-                    _enemyQueue.push(data);
-                    _processEnemyQueue();
-
-                    // BubbleShoot.enemy.shooter.angle = 180 - data.angle;
-                    // BubbleShoot.enemy.fire();
-                });
-
-                BubbleShoot.server.on('finish', function(winnerID) {
-
-                    BubbleShoot.finishedByServer = true;
-
-                    console.log('finish: ', winnerID);
-                    if (winnerID == BubbleShoot.player.id) {
-                        _this.finish(BubbleShoot.player);
-                    } else {
-                        _this.finish(BubbleShoot.enemy);
-                    }
-                });
-
-                // @todo - change player/enemy to p1/p2
-                var room = BubbleShoot.room;
-                var p1 = room.players[0];
-                var p2 = room.players[1];
-
-                if (BubbleShoot.nickname == p2.id) {
-                
-                    BubbleShoot.player = new BubbleShoot.Player(p2.id, BubbleShoot.PLAYER_SIDE_BOTTOM);
-                    BubbleShoot.enemy = new BubbleShoot.Player(p1.id, BubbleShoot.PLAYER_SIDE_TOP);
-
-                    BubbleShoot.player.board.setGrid(p2.grid);
-                    BubbleShoot.enemy.board.setGrid(p1.grid);
-
-                    BubbleShoot.player.shooter.load(p2.bubbles);
-                    BubbleShoot.enemy.shooter.load(p1.bubbles);
-
-                } else {
-                
-                    BubbleShoot.player = new BubbleShoot.Player(p1.id, BubbleShoot.PLAYER_SIDE_BOTTOM);
-                    BubbleShoot.enemy = new BubbleShoot.Player(p2.id, BubbleShoot.PLAYER_SIDE_TOP);
-
-                    BubbleShoot.player.board.setGrid(p1.grid);
-                    BubbleShoot.enemy.board.setGrid(p2.grid);
-
-                    BubbleShoot.player.shooter.load(p1.bubbles);
-                    BubbleShoot.enemy.shooter.load(p2.bubbles);
-                } 
-
-                BubbleShoot.player.board.create();
-                BubbleShoot.enemy.board.create();
-
-                BubbleShoot.player.shooter.reload(true);
-                BubbleShoot.enemy.shooter.reload(true);
-
-                BubbleShoot.player.enemy = BubbleShoot.enemy;
-                BubbleShoot.enemy.enemy = BubbleShoot.player;
-
-                ;(function getLatency() {
-                
-                    var updateLatency = function(latency) {
-                        _this.latency = latency;
-                        getLatency();
-                    }
-
-                    setTimeout(function() {
-                        BubbleShoot.server.ping(updateLatency)
-                    }, 2000); 
-                })();
-
-
-                return done.call(this);
-            }
-        },
-
-        configureCollision : function() 
-        {
-            var config = BubbleShoot.Collision.config;
-            config.bubbleRadius = BubbleShoot.UI.bubble.radius;
-            config.trajectory.distance = BubbleShoot.UI.bubble.radius/5;
-            config.trajectory.duration = 600;
-            config.gameWidth = BubbleShoot.game.width;
-        },
-
-        attachEvents : function() 
-        {
-            this.game.input.addMoveCallback(this.inputMove, this);
-            this.game.input.onUp.add(this.inputUp, this);
-            this.game.canvas.style.cursor = 'crosshair';
-        },
-
-        detachEvents : function()
-        {
-            this.game.input.deleteMoveCallback(this.inputMove, this);
-            this.game.input.onUp.remove(this.inputUp, this);
-            this.game.canvas.style.cursor = 'default';
-        },
-
-        update : function() 
-        {
-            fpsText.setText(this.time.fps + ' | ' + this.latency);
-        },
-
-        render : function() 
-        {
-            // var _this = this;
-            // BubbleShoot.player.bubbles.forEachAlive(function(bubble) {
+    render : function() 
+    {
+        // var _this = this;
+        // BubbleShooter.player.bubbles.forEachAlive(function(bubble) {
             //     this.game.debug.body(bubble);
             // }.bind(this));
-        },
+    },
 
-        inputUp : function(input, event) 
-        {
-            if (this.isMultiplayer()) {
+    inputUp : function(input, event) 
+    {
+        if (this.isMultiplayer()) {
 
-                if (!BubbleShoot.player.shooter._loaded) {
-                    return false;
-                }
-
-                var data = {
-                    playerId : BubbleShoot.player.id,
-                    angle : BubbleShoot.player.shooter.angle,
-                    tag : BubbleShoot.player.shooter.bubble.tag,
-                } 
-
-                // BubbleShoot._queue.player.push({angle : data.angle, tag: data.tag});
-
-                BubbleShoot.server.emit('player-fire', data, function(error, tag) {
-
-                    if (error) {
-                        return console.error('error: ' . error);
-                    }
-
-                    BubbleShoot.player.shooter.load(tag);
-                    console.log('emit: player-fire', tag);
-                });
-            } else {
-
-                var bubbleTag = BubbleShoot.Bubble.getRandomSprite();
-                BubbleShoot.player.shooter.load(bubbleTag); 
-
-                if (BubbleShoot.debug) {
-                    BubbleShoot.enemy.shooter.load(bubbleTag); 
-                    BubbleShoot.enemy.fire();
-                    BubbleShoot.enemy.shooter.reload();
-                }
-            }
-
-            BubbleShoot.player.fire();
-            BubbleShoot.player.shooter.reload();
-        }, 
-
-        inputMove : function(input, x, y, fromClick) 
-        {
-            var rotation = this.game.physics.arcade.angleToPointer(BubbleShoot.player.shooter);
-            // fix rotation: imagem deveria estar apontada para direita, esta para cima
-            rotation += 1.57079633;
-
-            BubbleShoot.player.shooter.setRotation(rotation);
-            BubbleShoot.player.shooter.showTrajectory();
-
-            if (BubbleShoot.debug) {
-                BubbleShoot.enemy.shooter.angle = 180 - BubbleShoot.player.shooter.angle; 
-            }
-        },
-
-        finish: function(winner) 
-        {
-            if (BubbleShoot.state == 'finished') {
+            if (!BubbleShooter.player.shooter._loaded) {
                 return false;
             }
-            BubbleShoot.state = 'finished';
 
-            var loser = BubbleShoot.player == winner ? BubbleShoot.enemy : BubbleShoot.player;
+            var data = {
+                playerId : BubbleShooter.player.id,
+                angle : BubbleShooter.player.shooter.angle,
+                tag : BubbleShooter.player.shooter.bubble.tag,
+            } 
 
-            console.log('game has finished', winner.id);
+            BubbleShooter.server.emit('player-fire', data, function(error, tag) {
 
-            if (this.isMultiplayer()) {
-
-                // BubbleShoot.server.emit('debug-queue', BubbleShoot._queue);
-
-                if (!BubbleShoot.finishedByServer) {
-                    // BubbleShoot.finishedByServer = true;
-                    var room = BubbleShoot.room;
-                    var data = {
-                        winnerID: winner.id,
-                        room: {
-                            id : room.id,
-                            players: [
-                                { id: room.players[0].id},
-                                { id: room.players[1].id},
-                            ],
-                            state: room.state,
-                        }, 
-                    };
-                    console.log('BubbleShoot.server.emit(finish)', data);
-                    BubbleShoot.server.emit('finish', data);
+                if (error) {
+                    return console.error('error: ' . error);
                 }
-            } else {
-                if (false == BubbleShoot.debug) {
-                    BubbleShoot.computer.stop();
-                }
-            }
 
-            this.detachEvents();
-
-            this.createModalLayer();
-
-            var textWinLabel = winner.id + ' WIN!';
-            var textWinPosition = {
-                x : winner.board.x + winner.board.width/2,
-                y:  winner.board.y + winner.board.height/2
-            };
-            var textWin = this.game.add.bitmapText(textWinPosition.x, textWinPosition.y, 'font', textWinLabel, 30);
-            textWin.anchor.setTo(0.5);
-            textWin.alpha = 0.7;
-
-            var textLoseLabel = loser.id + ' LOSE!';
-            var textLosePosition = {
-                x : loser.board.x + loser.board.width/2,
-                y:  loser.board.y + loser.board.height/2
-            };
-            var textLose = this.game.add.bitmapText(textLosePosition.x, textLosePosition.y, 'font', textLoseLabel, 30);
-            textLose.anchor.setTo(0.5);
-            textLose.alpha = 0.7;
-
-            var menuButton = Utils.createButton({
-                label: 'Menu',
-                position: {x : this.game.world.centerX, y: this.game.world.centerY},
-                callback : function() {
-                    this.state.start('menu'); 
-                },
-                context: this,
-                alpha: 1,
+                BubbleShooter.player.shooter.load(tag);
+                console.log('emit: player-fire', tag);
             });
-        },
+        } else {
 
-        isMultiplayer: function() {
-            return BubbleShoot.mode == BubbleShoot.MODES.MULTIPLAYER;
-        },
+            var bubbleTag = Bubble.getRandomSprite();
+            BubbleShooter.player.shooter.load(bubbleTag); 
 
-        createModalLayer: function() 
-        {
-            var rect =  Utils.createRect(BubbleShoot.game.width, BubbleShoot.game.height, 'rgba(25, 25, 25, 0.9)');
-            var modal = BubbleShoot.entities.create(0, 0, rect); 
-            modal.bringToTop();
-            return modal;
-        },
-        
-    } 
+            if (BubbleShooter.debug) {
+                BubbleShooter.enemy.shooter.load(bubbleTag); 
+                BubbleShooter.enemy.fire();
+                BubbleShooter.enemy.shooter.reload();
+            }
+        }
 
-    global.Game = Game;
+        BubbleShooter.player.fire();
+        BubbleShooter.player.shooter.reload();
+    }, 
 
-})(this, BubbleShoot);
+    inputMove : function(input, x, y, fromClick) 
+    {
+        var rotation = this.game.math.angleBetween(BubbleShooter.player.shooter.x, BubbleShooter.player.shooter.y, x, y);
+
+        // fix rotation: imagem deveria estar apontada para direita, esta para cima
+        rotation += 1.57079633;
+
+        BubbleShooter.player.shooter.setRotation(rotation);
+        BubbleShooter.player.shooter.showTrajectory();
+
+        if (BubbleShooter.debug) {
+            BubbleShooter.enemy.shooter.angle = 180 - BubbleShooter.player.shooter.angle; 
+        }
+    },
+
+    finish: function(winner) 
+    {
+        if (BubbleShooter.state == 'finished') {
+            return false;
+        }
+        BubbleShooter.state = 'finished';
+
+        var loser = BubbleShooter.player == winner ? BubbleShooter.enemy : BubbleShooter.player;
+
+        console.log('game has finished', winner.id);
+
+        if (this.isMultiplayer()) {
+
+            // BubbleShooter.server.emit('debug-queue', BubbleShooter._queue);
+
+            if (!BubbleShooter.finishedByServer) {
+                // BubbleShooter.finishedByServer = true;
+                var room = BubbleShooter.room;
+                var data = {
+                    winnerID: winner.id,
+                    room: {
+                        id : room.id,
+                        players: [
+                            { id: room.players[0].id},
+                            { id: room.players[1].id},
+                        ],
+                        state: room.state,
+                    }, 
+                };
+                console.log('BubbleShooter.server.emit(finish)', data);
+                BubbleShooter.server.emit('finish', data);
+            }
+        } else {
+            if (false == BubbleShooter.debug) {
+                BubbleShooter.computer.stop();
+            }
+        }
+
+        this.detachEvents();
+
+        this.createModalLayer();
+
+        var textWinLabel = winner.id + ' WIN!';
+        var textWinPosition = {
+            x : winner.board.x + winner.board.width/2,
+            y:  winner.board.y + winner.board.height/2
+        };
+        var textWin = this.game.add.bitmapText(textWinPosition.x, textWinPosition.y, 'font', textWinLabel, 30);
+        textWin.anchor.setTo(0.5);
+        textWin.alpha = 0.7;
+
+        var textLoseLabel = loser.id + ' LOSE!';
+        var textLosePosition = {
+            x : loser.board.x + loser.board.width/2,
+            y:  loser.board.y + loser.board.height/2
+        };
+        var textLose = this.game.add.bitmapText(textLosePosition.x, textLosePosition.y, 'font', textLoseLabel, 30);
+        textLose.anchor.setTo(0.5);
+        textLose.alpha = 0.7;
+
+        var menuButton = Utils.createButton({
+            label: 'Menu',
+            position: {x : this.game.world.centerX, y: this.game.world.centerY},
+            callback : function() {
+                this.state.start('menu'); 
+            },
+            context: this,
+            alpha: 1,
+        });
+    },
+
+    isMultiplayer: function() {
+        return BubbleShooter.mode == BubbleShooter.MODES.MULTIPLAYER;
+    },
+
+    createModalLayer: function() 
+    {
+        var rect =  Utils.createRect(BubbleShooter.game.width, BubbleShooter.game.height, 'rgba(25, 25, 25, 0.9)');
+        var modal = BubbleShooter.entities.create(0, 0, rect); 
+        modal.bringToTop();
+        return modal;
+    },
+
+} 
+
+module.exports = Game;

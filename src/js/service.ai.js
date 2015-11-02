@@ -1,10 +1,14 @@
-var player;
+var player, _modules = {}, module = {exports: {}}, exports = module.exports;
 
-var nocache = '?v'+Date.now();
-importScripts('bootstrap.js' + nocache);
-importScripts('utils.js' + nocache);
-importScripts('collision.js' + nocache);
-importScripts('board.js' + nocache);
+function require(path) 
+{
+    if (!_modules[path]) {
+        importScripts(path + '?v'+Date.now());
+        _modules[path] = this.module.exports;
+    }
+
+    return _modules[path];
+}
 
 function response(data, args) 
 {
@@ -13,7 +17,12 @@ function response(data, args)
         args = [args];
     }
     postMessage({ id: data.id, args: args});
-}
+}                                     
+
+var BubbleShooter = require('./bubble-shooter.js');
+var Utils = require('./utils.js');
+var Collision = require('./collision.js');
+var Board = require('./board.js');
 
 self.addEventListener('message', function(event) {
 
@@ -37,9 +46,9 @@ self.addEventListener('message', function(event) {
 
 });
 
-function bootstrap(_player, collisionProperties)
+function bootstrap(_player)
 {
-    var board = new BubbleShoot.Board(_player);
+    var board = new Board(_player);
 
     for (var prop in _player.board) {
         board[prop] = _player.board[prop];
@@ -47,8 +56,6 @@ function bootstrap(_player, collisionProperties)
 
     player = _player;
     player.board = board;
-
-    initializeCollisionProperties(collisionProperties);
 }
 
 function updateGrid(grid) 
@@ -97,18 +104,9 @@ function findBestAgle(tag)
     return ordered.shift();
 }
 
-function initializeCollisionProperties(data) 
-{
-    var config = BubbleShoot.Collision.config;
-    config.bubbleRadius = data.bubbleRadius;
-    config.trajectory.distance = data.bubbleRadius/5;
-    config.trajectory.duration = 600;
-    config.gameWidth = data.gameWidth;
-}
-
 function getBubbleTrajectory(position, angle, board)
 {
-    var trajectory = BubbleShoot.Collision.trajectory(position, angle, board);
+    var trajectory = Collision.trajectory(position, angle, board);
     return trajectory;
 }
 
