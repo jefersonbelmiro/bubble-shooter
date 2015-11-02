@@ -17,11 +17,11 @@
 
     <preference name="SplashScreen" value="screen" />
     <preference name="SplashScreenDelay" value="3000"/>
-    <preference name="AutoHideSplashScreen" value="false"/>
+    <preference name="AutoHideSplashScreen" value="true"/>
 
     <preference name="permissions" value="none" />
     <preference name="orientation" value="portrait" />
-    <preference name="fullscreen" value="true" />
+    <preference name="fullscreen" value="false" />
     <platform name="android">
         <preference name="orientation" value="portrait" />
         <splash density="port-ldpi" src="res/screen/android/screen-ldpi-portrait.png" />
