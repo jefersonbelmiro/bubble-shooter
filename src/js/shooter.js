@@ -118,23 +118,18 @@ Shooter.prototype.reload = function(force, nextTag) {
         this._loaded = true;
     };
 
-    // @todo - debug
-    // if (BubbleShooter.enemy.id == this.player.id && BubbleShooter.mode == BubbleShooter.MODES.MULTIPLAYER) {
-        //     force = true;
-        // }
+    if (force) {
+        return BubbleShooter.nextTick(done.bind(this));
+    }
 
-        if (force) {
-            return BubbleShooter.nextTick(done.bind(this));
-        }
+    var scale = UI.bubble.scale;
+    bubble.scale.setTo(0.001);
+    var anim = BubbleShooter.game.add.tween(bubble.scale);
+    anim.to({x: scale, y: scale}, 333);
+    anim.onComplete.add(done.bind(this));
+    anim.start();
 
-        var scale = UI.bubble.scale;
-        bubble.scale.setTo(0.001);
-        var anim = BubbleShooter.game.add.tween(bubble.scale);
-        anim.to({x: scale, y: scale}, 333);
-        anim.onComplete.add(done.bind(this));
-        anim.start();
-
-        return true;
+    return true;
 };
 
 Shooter.prototype.setRotation = function(rotation) 

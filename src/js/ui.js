@@ -37,7 +37,7 @@ var bubbleSize = BUBBLE_SIZE * bubbleScale;
 
 var UI = {
 
-    background: '#222222',
+    background: '#B07943',
 
     width : width,
     height: height,

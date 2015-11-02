@@ -55,6 +55,16 @@ AI.prototype.fire = function(done)
     {
         // BubbleShooter.game.tweens.removeFrom(this.player.shooter);
 
+        function _fire()
+        {
+            this.player.fire(done.bind(this), data.trajectory);
+            this.player.shooter.load(Bubble.getRandomSprite());
+            this.player.shooter.reload(); 
+        }
+
+        this.player.shooter.rotation = data.rotation;
+        return _fire.call(this);
+        
         var speed = 2000;
         var delta = 1000;
         var diff = this.player.shooter.rotation - data.rotation;
@@ -70,11 +80,7 @@ AI.prototype.fire = function(done)
 
         var tween = BubbleShooter.game.add.tween(this.player.shooter);
         tween.to({rotation : data.rotation}, time);
-        tween.onComplete.add(function() {
-            this.player.fire(done.bind(this), data.trajectory);
-            this.player.shooter.load(Bubble.getRandomSprite());
-            this.player.shooter.reload();
-        }.bind(this))
+        tween.onComplete.add(_fire.bind(this))
         tween.start();
     }
 
