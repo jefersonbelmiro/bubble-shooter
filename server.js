@@ -20,7 +20,7 @@ var PlayerDataQueue = {
 
     queue : {},
     running : {},
-    attempts : {}
+    attempts : {},
     tick : 30,
     limit : 30,
 
@@ -41,7 +41,7 @@ var PlayerDataQueue = {
             this.queue[playerID] = [];
         }
 
-        this.queue[playerID].push({key: key: data: data});
+        this.queue[playerID].push({key: key, data: data});
     },
 
     remove : function(playerID, data)
