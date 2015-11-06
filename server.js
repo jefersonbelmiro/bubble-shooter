@@ -77,7 +77,7 @@ var PlayerDataQueue = {
         }
 
         var _this = this;
-        var client = clientsByPlayer[playerID];
+        var client = clients[clientsByPlayer[playerID]];
 
         if (!client) {
             console.log('  - 2] empty client');
