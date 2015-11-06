@@ -90,12 +90,12 @@ var PlayerDataQueue = {
             return this.nextTick(playerID, true);
         }
 
-        var data = queue[0];
+        var current = queue[0];
 
-        console.log('  - 4] emit', data);
+        console.log('  - 4] emit', current);
 
-        client.emit(data.key, data, function() {
-            _this.remove(playerID, data);
+        client.emit(current.key, current.data, function() {
+            _this.remove(playerID, current);
         });
     },
 

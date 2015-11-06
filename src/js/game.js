@@ -152,6 +152,7 @@ Game.prototype = {
             BubbleShooter.server.removeAllListeners();
             BubbleShooter.server.on('player-fire', function(data) {
 
+                console.log('player-fire', data);
                 BubbleShooter.enemy.shooter.load(data.load);
 
                 _enemyQueue.push(data);
@@ -161,7 +162,7 @@ Game.prototype = {
             BubbleShooter.server.on('player-reload', function(tags) {
 
                 console.log('player-reload', tags);
-                BubbleShooter.player.load(tags);
+                BubbleShooter.player.shooter.load(tags);
             });
 
             BubbleShooter.server.on('finish', function(winnerID) {
