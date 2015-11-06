@@ -10,6 +10,7 @@ function Server()
     // this.host = '127.0.0.1';
     this.port = 8080;
     this.path = 'http://'+this.host+':'+this.port;
+    this.updateOnConnect = false;
 }
 
 Server.prototype.emit = function(key, data, done)
@@ -92,13 +93,14 @@ Server.prototype.registryDefaultEvents = function()
 {
     var _this = this;
     this.socket.on('connect', function() {
-        console.log('connect');
+        console.log('connect', _this.updateOnConnect);
         _this.socket.emit('join', BubbleShooter.nickname, function(error) {
             if (error) console.error('join error', error);
         });
     });
 
     this.socket.on('disconnect', function() { 
+        _this.updateOnConnect = true;
         console.log('disconnect');
     }); 
 }

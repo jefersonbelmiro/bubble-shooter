@@ -16,6 +16,10 @@ game.state.add('room-create', RoomCreate);
 game.state.add('game', Game);
 game.state.start('boot'); 
 
+if (false == game.device.desktop) {
+    catchErrors();
+}
+
 function catchErrors() 
 {
     var container = document.createElement('pre');

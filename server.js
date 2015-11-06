@@ -16,6 +16,82 @@ var TAGS = ['green', 'blue', 'yellow', 'red', 'magenta', 'orange'];
 var STATE_CREATED = 'created';
 var STATE_PLAYING = 'playing';
 
+var PlayerDataQueue = {
+
+    queue : {},
+    running : {},
+    attempts : {}
+    tick : 30,
+    limit : 30,
+
+    nextTick : function(playerID, retry)
+    {
+        if (retry) {
+            this.attempts[playerID] = this.attempts[playerID] + 1 || 1 ; 
+            if (this.attempts[playerID] >= this.limit) {
+                return clearTimeout(this.running[playerID]);
+            }
+        }
+        return this.running[playerID] = setTimeout(this.send(playerID), this.tick);
+    },
+
+    add : function(playerID, key, data) 
+    {
+        if (!this.queue[playerID]) {
+            this.queue[playerID] = [];
+        }
+
+        this.queue[playerID].push({key: key: data: data});
+    },
+
+    remove : function(playerID, data)
+    {
+        var index = this.queue[playerID].indexOf(data);
+        if (index) {
+            this.queue[playerID].splice(index);
+        }
+    },
+
+    stop : function(playerID)
+    {
+        var tick = this.running[playerID];
+        if (tick) {
+            clearTimeout(tick);
+        }
+        delete this.queue[playerID];
+        delete this.running[playerID];
+        delete this.attempts[playerID];
+    },
+
+    send : function(playerID) 
+    {
+        var queue = this.queue[playerID];
+
+        if (!queue || queue.length == 0) {
+            return false;
+        }
+
+        var _this = this;
+        var client = clientsByPlayer[playerID];
+
+        if (!client) {
+            return this.nextTick(playerID);
+        }
+
+        var running = this.running[playerID];
+        if (running) {
+            return this.nextTick(playerID, true);
+        }
+
+        var data = queue[0];
+
+        client.emit(data.key, data, function() {
+            _this.remove(playerID, data);
+        });
+    },
+
+};
+
 function getRoom(id)
 {
     for (var i = 0, len = rooms.length; i < len; i++) {
@@ -148,6 +224,8 @@ io.on('connection', function(socket) {
         delete clientsByPlayer[playerId];
         delete playersByClient[socket.id];
         delete clients[socket.id];
+
+        PlayerDataQueue.stop(playerId);
     });
 
     socket.on('join', function(playerId, done) {
@@ -169,34 +247,19 @@ io.on('connection', function(socket) {
         var p1 = room.players[0];
         var p2 = room.players[1];
         var tagsLoad = createBubbles(1);
-
+        var playerID = data.playerId;
         var dataSend = {angle: data.angle, tag: data.tag, load: tagsLoad};
-        var client;
 
-        console.log('player-fire', dataSend);
-
-        done(false, tagsLoad);
+        console.log('player-fire', playerID);
 
         if (data.playerId == p1.id) {
-            client = clients[clientsByPlayer[p2.id]];
+            enemyID = clientsByPlayer[p2.id];
         } else {
-            client = clients[clientsByPlayer[p1.id]];
+            enemyID = clientsByPlayer[p1.id];
         }
 
-        if (client) {
-            client.emit('player-fire', dataSend);
-        }
-        if (!client) {
-            console.error('client not found');
-            console.error(' - room', room);
-            console.error(' - data', data);
-            console.error(' - clientsByPlayer', clientsByPlayer);
-            console.error(' - clients', Object.keys(clients));
-        }
-    });
-
-    socket.on('debug-queue', function(data) {
-        console.log("\n\n - debug-queue:\n", data, "\n\n");
+        PlayerDataQueue.add(playerID, 'player-reload', tagsLoad);
+        PlayerDataQueue.add(enemyID, 'player-fire', dataSend);
     });
 
     socket.on('finish', function(data) {

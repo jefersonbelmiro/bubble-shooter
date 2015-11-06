@@ -156,9 +156,6 @@ Game.prototype = {
 
                 _enemyQueue.push(data);
                 _processEnemyQueue();
-
-                // BubbleShooter.enemy.shooter.angle = 180 - data.angle;
-                // BubbleShooter.enemy.fire();
             });
 
             BubbleShooter.server.on('finish', function(winnerID) {
