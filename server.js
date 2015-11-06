@@ -48,9 +48,10 @@ var PlayerDataQueue = {
 
     remove : function(playerID, data)
     {
+        console.log('remove', playerID, data);
         var index = this.queue[playerID].indexOf(data);
         if (index > -1) {
-            this.queue[playerID].splice(index);
+            this.queue[playerID].splice(index, 1);
         }
     },
 
