@@ -37,6 +37,7 @@ var PlayerDataQueue = {
 
     add : function(playerID, key, data) 
     {
+        console.log('add()', playerID, key, data);
         if (!this.queue[playerID]) {
             this.queue[playerID] = [];
         }
@@ -54,6 +55,7 @@ var PlayerDataQueue = {
 
     stop : function(playerID)
     {
+        console.log('stop()', playerID);
         var tick = this.running[playerID];
         if (tick) {
             clearTimeout(tick);
@@ -65,9 +67,11 @@ var PlayerDataQueue = {
 
     send : function(playerID) 
     {
+        console.log('send()', playerID);
         var queue = this.queue[playerID];
 
         if (!queue || queue.length == 0) {
+            console.log('  - 1] empty queue', queue);
             return false;
         }
 
@@ -75,15 +79,19 @@ var PlayerDataQueue = {
         var client = clientsByPlayer[playerID];
 
         if (!client) {
+            console.log('  - 2] empty client');
             return this.nextTick(playerID);
         }
 
         var running = this.running[playerID];
         if (running) {
+            console.log('  - 3] running', running);
             return this.nextTick(playerID, true);
         }
 
         var data = queue[0];
+
+        console.log('  - 4] emit', data);
 
         client.emit(data.key, data, function() {
             _this.remove(playerID, data);
