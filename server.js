@@ -43,6 +43,7 @@ var PlayerDataQueue = {
         }
 
         this.queue[playerID].push({key: key, data: data});
+        this.send(playerID);
     },
 
     remove : function(playerID, data)
