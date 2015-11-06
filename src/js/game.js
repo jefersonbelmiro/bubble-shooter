@@ -150,19 +150,23 @@ Game.prototype = {
 
             var _this = this;
             BubbleShooter.server.removeAllListeners();
-            BubbleShooter.server.on('player-fire', function(data) {
+            BubbleShooter.server.on('player-fire', function(data, done) {
 
                 console.log('player-fire', data);
                 BubbleShooter.enemy.shooter.load(data.load);
 
                 _enemyQueue.push(data);
                 _processEnemyQueue();
+
+                done();
             });
 
-            BubbleShooter.server.on('player-reload', function(tags) {
+            BubbleShooter.server.on('player-reload', function(tags, done) {
 
                 console.log('player-reload', tags);
                 BubbleShooter.player.shooter.load(tags);
+
+                done();
             });
 
             BubbleShooter.server.on('finish', function(winnerID) {
