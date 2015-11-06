@@ -261,9 +261,9 @@ io.on('connection', function(socket) {
         console.log('player-fire', playerID);
 
         if (data.playerId == p1.id) {
-            enemyID = clientsByPlayer[p2.id];
+            enemyID = p2.id;
         } else {
-            enemyID = clientsByPlayer[p1.id];
+            enemyID = p1.id;
         }
 
         PlayerDataQueue.add(playerID, 'player-reload', tagsLoad);

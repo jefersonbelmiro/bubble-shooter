@@ -158,6 +158,12 @@ Game.prototype = {
                 _processEnemyQueue();
             });
 
+            BubbleShooter.server.on('player-reload', function(tags) {
+
+                console.log('player-reload', tags);
+                BubbleShooter.player.load(tags);
+            });
+
             BubbleShooter.server.on('finish', function(winnerID) {
 
                 BubbleShooter.finishedByServer = true;
@@ -264,15 +270,7 @@ Game.prototype = {
                 tag : BubbleShooter.player.shooter.bubble.tag,
             } 
 
-            BubbleShooter.server.emit('player-fire', data, function(error, tag) {
-
-                if (error) {
-                    return console.error('error: ' . error);
-                }
-
-                BubbleShooter.player.shooter.load(tag);
-                console.log('emit: player-fire', tag);
-            });
+            BubbleShooter.server.emit('player-fire', data);
         } else {
 
             var bubbleTag = Bubble.getRandomSprite();
