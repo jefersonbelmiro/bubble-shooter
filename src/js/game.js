@@ -213,17 +213,17 @@ Game.prototype = {
             BubbleShooter.player.enemy = BubbleShooter.enemy;
             BubbleShooter.enemy.enemy = BubbleShooter.player;
 
-            ;(function getLatency() {
-
-                var updateLatency = function(latency) {
-                    _this.latency = latency;
-                    getLatency();
-                }
-
-                setTimeout(function() {
-                    BubbleShooter.server.ping(updateLatency)
-                }, 2000); 
-            })();
+            // ;(function getLatency() {
+            //
+            //     var updateLatency = function(latency) {
+            //         _this.latency = latency;
+            //         getLatency();
+            //     }
+            //
+            //     setTimeout(function() {
+            //         BubbleShooter.server.ping(updateLatency)
+            //     }, 2000); 
+            // })();
 
             return done.call(this);
         }
