@@ -49,7 +49,7 @@ var PlayerDataQueue = {
     remove : function(playerID, data)
     {
         var index = this.queue[playerID].indexOf(data);
-        if (index) {
+        if (index > -1) {
             this.queue[playerID].splice(index);
         }
     },
