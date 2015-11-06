@@ -71,7 +71,11 @@ Game.prototype = {
         var background = this.game.add.tileSprite(0, 0, backgroundData.width, backgroundData.height, "background");
         background.scale.setTo(scaleWidth, scaleHeight);
 
+        // false - window.blur pausa game
         this.game.stage.disableVisibilityChange = true;
+
+        // true ignra delta time quando game nao esta em 60fps
+        this.game.forceSingleUpdate = true
 
         this.game.time.advancedTiming = true;
         fpsText = this.game.add.text(0, 5, '00', {font: '16px Arial', fill: '#000'});
