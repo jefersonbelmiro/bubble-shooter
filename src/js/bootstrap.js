@@ -42,13 +42,7 @@ function catchErrors()
         var args = Array.prototype.slice.call(arguments);
         builtin.apply(window.console, args);
 
-        var message = '<hr />';
-
-        args.forEach(function(error) {
-            message += ' - ' + error + '<br />';
-        });
-
-        message += '<hr />';
+        var message = '<hr />' + args.join(' | ');
         debug(message);
     }
 

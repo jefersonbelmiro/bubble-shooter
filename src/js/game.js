@@ -40,11 +40,12 @@ function _processEnemyQueue()
 
     if (player.shooter.bubble.tag != data.tag) {
         console.error('2]_processEnemyQueue', player.shooter.bubble.tag, data.tag);
+        console.error('2.1]_processEnemyQueue', _enemyQueue.length, _enemyQueue);
         player.shooter.bubble.tag = data.tag;
         player.shooter.bubble.frameName = data.tag;
     }
 
-    console.log('fire', player.shooter.bubble.tag);
+    console.log('enemy fire', player.shooter.bubble.tag);
 
     player.shooter.angle = 180 - data.angle;
     player.fire();
