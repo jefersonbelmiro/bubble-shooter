@@ -27,6 +27,7 @@ var PlayerDataQueue = {
 
     nextTick : function(playerID, retry)
     {
+        console.log('nextTick', playerID, retry);
         if (retry) {
             this.attempts[playerID] = this.attempts[playerID] + 1 || 1 ; 
             if (this.attempts[playerID] >= this.limit) {
