@@ -29,15 +29,17 @@ var PlayerDataQueue = {
         if (retry) {
             this.attempts[playerID] = this.attempts[playerID] + 1 || 1 ; 
             if (this.attempts[playerID] >= this.limit) {
-                return clearTimeout(this.running[playerID]);
+                return false;
             }
         }
-        return this.running[playerID] = setTimeout(this.send(playerID), this.tick);
+        return setTimeout(this.send(playerID), this.tick);
     },
 
     add : function(playerID, key, data) 
     {
         console.log('add()', playerID, key, data);
+        this.attempts[playerID] = 0; 
+
         if (!this.queue[playerID]) {
             this.queue[playerID] = [];
         }
@@ -55,13 +57,9 @@ var PlayerDataQueue = {
         }
     },
 
-    stop : function(playerID)
+    clear : function(playerID)
     {
-        console.log('stop()', playerID);
-        var tick = this.running[playerID];
-        if (tick) {
-            clearTimeout(tick);
-        }
+        console.log('clear()', playerID);
         delete this.queue[playerID];
         delete this.running[playerID];
         delete this.attempts[playerID];
@@ -85,12 +83,12 @@ var PlayerDataQueue = {
             return this.nextTick(playerID);
         }
 
-        var running = this.running[playerID];
-        if (running) {
+        if (this.running[playerID]) {
             console.log('  - 3] running', running);
             return this.nextTick(playerID, true);
         }
-
+        
+        this.running[playerID] = true;
         var current = queue[0];
 
         console.log('  - 4] emit', current);
@@ -235,16 +233,17 @@ io.on('connection', function(socket) {
         delete playersByClient[socket.id];
         delete clients[socket.id];
 
-        PlayerDataQueue.stop(playerId);
+        PlayerDataQueue.clear(playerId);
     });
 
     socket.on('join', function(playerId, done) {
 
         console.log('join', playerId);
 
-        if (clientsByPlayer[playerId]) {
-            return done('Nickname '+ playerId +' is already taken');
-        }
+        // @todo - pensar em algo
+        // if (clientsByPlayer[playerId]) {
+            // return done('Nickname '+ playerId +' is already taken');
+        // }
 
         clientsByPlayer[playerId] = socket.id;
         playersByClient[socket.id] = playerId;
