@@ -236,7 +236,7 @@ io.on('connection', function(socket) {
 
         playersAttempts[playerId] = setTimeout(function() {
             PlayerDataQueue.clear(playerId);
-        }, 33000);
+        }, 300000); // 5min
     });
 
     socket.on('join', function(data, done) {
