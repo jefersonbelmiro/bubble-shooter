@@ -96,6 +96,7 @@ var PlayerDataQueue = {
 
         client.emit(current.key, current.data, function() {
             _this.remove(playerID, current);
+            this.running[playerID] = false;
         });
     },
 
