@@ -236,18 +236,24 @@ io.on('connection', function(socket) {
         PlayerDataQueue.clear(playerId);
     });
 
-    socket.on('join', function(playerId, done) {
+    socket.on('join', function(data, done) {
 
-        console.log('join', playerId);
+        console.log('join', data);
 
         // @todo - pensar em algo
         // if (clientsByPlayer[playerId]) {
             // return done('Nickname '+ playerId +' is already taken');
         // }
 
-        clientsByPlayer[playerId] = socket.id;
-        playersByClient[socket.id] = playerId;
+        clients[socket.id] = socket;
+        clientsByPlayer[data.playerID] = socket.id;
+        playersByClient[socket.id] = data.playerID;
+
         done(false);
+
+        if (data.reconnect) {
+            PlayerDataQueue.send(data.playerID);
+        }
     });
 
     socket.on('player-fire', function(data, done) {

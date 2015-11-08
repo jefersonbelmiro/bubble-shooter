@@ -94,6 +94,10 @@ Server.prototype.registryDefaultEvents = function()
     var _this = this;
     this.socket.on('connect', function() {
         console.log('connect', _this.updateOnConnect);
+        var data = {
+            playerID : BubbleShooter.nickname,
+            reconnect : _this.updateOnConnect,
+        };
         _this.socket.emit('join', BubbleShooter.nickname, function(error) {
             if (error) console.error('join error', error);
         });
