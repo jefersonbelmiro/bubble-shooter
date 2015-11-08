@@ -2,7 +2,7 @@
 
 case "$1" in
     start)
-        /usr/bin/nodejs server.js > /tmp/server.log 2> /tmp/server.error.log &
+        /usr/bin/nodejs server.js > /tmp/server.log &
         echo -e "\n - server start\n"
         exit 1
         ;;
@@ -13,7 +13,7 @@ case "$1" in
         ;;
     restart)
         /usr/bin/pkill -f 'nodejs server.js'
-        /usr/bin/nodejs server.js > /tmp/server.log 2> /tmp/server.error.log &
+        /usr/bin/nodejs server.js > /tmp/server.log &
         echo -e "\n - server restart\n"
         exit 1
         ;;
