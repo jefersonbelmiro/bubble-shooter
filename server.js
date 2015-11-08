@@ -10,6 +10,7 @@ var clientsByPlayer = {};
 var playersByClient = {};
 var rooms = [];
 var roomByPlayer = {};
+var playersAttempts = {};
 
 var PORT = 8080;
 var TAGS = ['green', 'blue', 'yellow', 'red', 'magenta', 'orange'];
@@ -233,7 +234,9 @@ io.on('connection', function(socket) {
         delete playersByClient[socket.id];
         delete clients[socket.id];
 
-        PlayerDataQueue.clear(playerId);
+        playersAttempts[playerId] = setTimeout(function() {
+            PlayerDataQueue.clear(playerId);
+        }, 33000);
     });
 
     socket.on('join', function(data, done) {

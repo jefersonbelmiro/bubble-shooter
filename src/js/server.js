@@ -98,7 +98,7 @@ Server.prototype.registryDefaultEvents = function()
             playerID : BubbleShooter.nickname,
             reconnect : _this.updateOnConnect,
         };
-        _this.socket.emit('join', BubbleShooter.nickname, function(error) {
+        _this.socket.emit('join', data, function(error) {
             if (error) console.error('join error', error);
         });
     });
