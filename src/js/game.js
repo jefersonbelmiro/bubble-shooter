@@ -169,7 +169,9 @@ Game.prototype = {
             BubbleShooter.server.on('player-reload', function(tags, done) {
 
                 console.log('player-reload', tags);
+
                 BubbleShooter.player.shooter.load(tags);
+                BubbleShooter.player.shooter.reload();
 
                 done();
             });
