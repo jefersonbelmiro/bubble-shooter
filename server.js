@@ -86,7 +86,7 @@ var PlayerDataQueue = {
         }
 
         if (this.running[playerID]) {
-            console.log('  - 3] running', running);
+            console.log('  - 3] running', this.running[playerID]);
             return this.nextTick(playerID, true);
         }
         
