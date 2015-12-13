@@ -16,11 +16,11 @@ game.state.add('room-create', RoomCreate);
 game.state.add('game', Game);
 game.state.start('boot'); 
 
-setTimeout(function() {
-    if (false == game.device.desktop) {
-        catchErrors();
-    }
-}, 33);
+// setTimeout(function() {
+//     if (false == game.device.desktop) {
+//         catchErrors();
+//     }
+// }, 33);
 
 function catchErrors() 
 {
