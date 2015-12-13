@@ -62,20 +62,14 @@ Game.prototype = {
         BubbleShooter.state = 'stated';
         BubbleShooter.finishedByServer = false;
 
-        var backgroundData = {
-            width : BubbleShooter.game.cache.getFrame('background').width,
-            height : BubbleShooter.game.cache.getFrame('background').height,
-        }
-
-        var scaleHeight = BubbleShooter.game.height / backgroundData.height;
-        var scaleWidth = BubbleShooter.game.width / backgroundData.width;
-        var background = this.game.add.tileSprite(0, 0, backgroundData.width, backgroundData.height, "background");
-        background.scale.setTo(scaleWidth, scaleHeight);
+        var background = this.game.add.image(0, 0, 'sprites', 'board_bg');
+        background.width = this.game.width;
+        background.height = this.game.height;
 
         // false - window.blur pausa game
         this.game.stage.disableVisibilityChange = true;
 
-        // true ignra delta time quando game nao esta em 60fps
+        // true ignora delta time quando game nao esta em 60fps
         this.game.forceSingleUpdate = true
 
         this.game.time.advancedTiming = true;
@@ -306,9 +300,10 @@ Game.prototype = {
         // fix rotation: imagem deveria estar apontada para direita, esta para cima
         rotation += 1.57079633;
 
+        // BubbleShooter.player.shooter.rotation = rotation;
         BubbleShooter.player.shooter.setRotation(rotation);
-        BubbleShooter.player.shooter.showTrajectory();
-
+        // BubbleShooter.player.shooter.showTrajectory();
+    
         if (BubbleShooter.debug) {
             BubbleShooter.enemy.shooter.angle = 180 - BubbleShooter.player.shooter.angle; 
         }
@@ -356,12 +351,49 @@ Game.prototype = {
 
         this.createModalLayer();
 
+
+        var won = BubbleShooter.player == winner;
+        var fingerKey = won ? 'win_finger' : 'lose_finger';
+        var textKey = won ? 'you_won' : 'you_lose';
+
+        var finger = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'sprites', fingerKey);
+        finger.anchor.setTo(0.5);
+        finger.y += 80;
+
+        var text = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'sprites', textKey);
+        text.anchor.setTo(0.5);
+        text.y -= 120;
+
+
+
+        var textMenu = this.game.add.bitmapText(this.game.world.centerX, 0, 'dunkin', 'Menu', 30);
+        textMenu.alpha = 0;
+        textMenu.scale.setTo(0);
+        textMenu.anchor.setTo(0.5);
+
+        textMenu.inputEnabled = true;
+        textMenu.events.onInputDown.add(function() {
+            this.state.start('menu');
+        }, this);
+
+        this.game.add.tween(textMenu).to({ alpha: 1, y: 60 }, 500, Phaser.Easing.Back.Out, true, 500); 
+        this.game.add.tween(textMenu.scale).to({x: 1, y: 1}, 500, Phaser.Easing.Back.Out, true, 700);
+
+        
+        return;
+
+
+
+
+
+
+
         var textWinLabel = winner.id + ' WIN!';
         var textWinPosition = {
             x : winner.board.x + winner.board.width/2,
             y:  winner.board.y + winner.board.height/2
         };
-        var textWin = this.game.add.bitmapText(textWinPosition.x, textWinPosition.y, 'font', textWinLabel, 30);
+        var textWin = this.game.add.bitmapText(textWinPosition.x, textWinPosition.y, 'dunkin', textWinLabel, 30);
         textWin.anchor.setTo(0.5);
         textWin.alpha = 0.7;
 
@@ -370,7 +402,7 @@ Game.prototype = {
             x : loser.board.x + loser.board.width/2,
             y:  loser.board.y + loser.board.height/2
         };
-        var textLose = this.game.add.bitmapText(textLosePosition.x, textLosePosition.y, 'font', textLoseLabel, 30);
+        var textLose = this.game.add.bitmapText(textLosePosition.x, textLosePosition.y, 'dunkin', textLoseLabel, 30);
         textLose.anchor.setTo(0.5);
         textLose.alpha = 0.7;
 

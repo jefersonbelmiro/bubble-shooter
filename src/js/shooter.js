@@ -6,7 +6,7 @@ var Collision = require('./collision.js');
 
 var Shooter = function(player) {
 
-    Phaser.Sprite.call(this, BubbleShooter.game, BubbleShooter.game.world.centerX, 0, 'sprites2', 'shooter');
+    Phaser.Sprite.call(this, BubbleShooter.game, BubbleShooter.game.world.centerX, 0, 'arrow');
     BubbleShooter.entities.add(this);
 
     player.shooter = this;
@@ -16,10 +16,11 @@ var Shooter = function(player) {
     this._loading = false;
     this._queue = []; 
 
-    this.scale.setTo(0.3);
-    this.anchor.setTo(0.5, 0.75);
+    // this.scale.setTo(0.2);
+    this.anchor.setTo(0.5, 0.9);
+    // this.anchor.setTo(0.5, 0.75);
 
-    this.y = this.height/4;
+    this.y = this.height;
 
     if (player.side == BubbleShooter.PLAYER_SIDE_TOP) {
         this.rotation = Utils.degreesToRadians(180);
@@ -28,6 +29,9 @@ var Shooter = function(player) {
     if (player.side == BubbleShooter.PLAYER_SIDE_BOTTOM) {
         this.angle = 0;
     }
+
+    this.createHand();
+    this.createHandAnimations();
 }
 
 Shooter.prototype = Object.create(Phaser.Sprite.prototype);
@@ -41,8 +45,29 @@ Shooter.prototype.fire = function(done, trajectory) {
         return false;
     }
 
+    bubble.visible = true;
+    this.hand.angle = this.angle;
+    this.hand.play(bubble.tag, 20);
+
+    var distance = 20;
+    var dx = Math.sin(this.rotation) * distance;
+    var dy = Math.cos(this.rotation) * distance;
+
+
+    if (this.player.side === BubbleShooter.PLAYER_SIDE_TOP) {
+    } else {
+        console.log('fire', dx, dy);
+        var tween = BubbleShooter.game.add.tween(this.hand);
+        tween.to({x: this.hand.x + dx, y: this.hand.y - dy}, 200);
+        tween.to({x: this.hand.x, y: this.hand.y}, 200);
+        tween.to({rotation: 0}, 10);
+        tween.start();
+    }
+
+
     this.bubble = null; 
-    var trajectory = trajectory || Collision.trajectory(this.position, Utils.degreesToRadians(this.angle), this.player.board);
+    var trajectory = trajectory || Collision.trajectory(this.position, this.rotation, this.player.board);
+    bubble.rotation = this.rotation;
     bubble.move(trajectory, done);
     return true;
 };
@@ -111,6 +136,10 @@ Shooter.prototype.reload = function(force, nextTag) {
 
     bubble.anchor.setTo(0.5)
     bubble.position.set(this.x, this.y);
+    bubble.visible = false;
+
+    this.hand.frameName = 'hand1_' + bubble.tag;
+    this.hand.visible = true;
 
     var done = function() {
         this.bubble = bubble;
@@ -118,7 +147,7 @@ Shooter.prototype.reload = function(force, nextTag) {
         this._loaded = true;
     };
 
-    if (force) {
+    if (true || force) {
         return BubbleShooter.nextTick(done.bind(this));
     }
 
@@ -142,6 +171,34 @@ Shooter.prototype.setRotation = function(rotation)
 
     if (this.player.side == BubbleShooter.PLAYER_SIDE_TOP && Math.abs(this.angle) < 95) {
         this.angle = this.angle > 0 ? 95 : -95;
+    }
+}
+
+Shooter.prototype.createHand = function()
+{
+    this.hand = BubbleShooter.game.add.sprite(this.x, this.y, 'hand', 'hand1_green');
+    BubbleShooter.entities.add(this.hand);
+
+    this.hand.anchor.setTo(0.44, 0.44);
+    this.hand.scale.setTo(UI.bubble.scale);
+    this.hand.angle = this.angle;
+    this.hand.visible = false;
+}
+
+Shooter.prototype.createHandAnimations = function()
+{
+    function onComplete()
+    {
+        if (this.bubble) {
+            this.hand.frameName = 'hand1_' + this.bubble.frameName;
+        }
+    }
+
+    for (var i = 0, len = Bubble.TAGS.length; i < len; i++) {
+
+        var tag = Bubble.TAGS[i];
+        var animation = this.hand.animations.add(tag, ['hand1_' + tag, 'hand2_' + tag, 'hand3_' + tag, 'hand4_' + tag]);
+        animation.onComplete.add(onComplete.bind(this));
     }
 }
 

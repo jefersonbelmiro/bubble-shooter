@@ -7,7 +7,10 @@ var REQUEST_PATH = path.dirname(__dirname);
 
 var clients = {};
 var clientsByPlayer = {};
-var rooms = {};
+var playersByClient = {};
+var rooms = [];
+var roomByPlayer = {};
+var playersAttempts = {};
 
 var PORT = 8080;
 var TAGS = ['green', 'blue', 'yellow', 'red', 'magenta', 'orange'];
@@ -30,17 +33,26 @@ var ProjectionAtTop = {
     },
 }
 
-function debug(message) 
+function getRoom(id)
 {
-    var now = new Date();
-    var args = Array.prototype.slice.call(arguments);
-    var time =  [
-        '[', now.getFullYear(), '-', now.getMonth() + 1, '-', now.getDate(), ' ',
-        now.getHours(), ':', now.getMinutes(), ':', now.getSeconds(), ":", now.getMilliseconds(), ']',
-    ];
+    for (var i = 0, len = rooms.length; i < len; i++) {
+        var room = rooms[i];
+        if (room.id == id) {
+            return room;
+        }
+    }
+    return false;
+}
 
-    args.unshift(time.join(''));
-    console.log.apply(this, args);
+function removeRoom(id)
+{
+    for (var i = 0, len = rooms.length; i < len; i++) {
+        var room = rooms[i];
+        if (room && room.id == id) {
+            rooms.splice(i, 1);
+        }
+    }
+    return false;
 }
 
 function getRandomInt(min, max) 
@@ -87,6 +99,20 @@ function createBubbles(len)
     return bubbles;
 }
 
+// io.set('origins', '*:*');
+//
+// app.use(function (req, res, next) {
+//     res.header("Access-Control-Allow-Origin", "*");
+//     res.header("Access-Control-Allow-Headers", "Cache-Control, Pragma, Origin, Authorization, Content-Type, X-Requested-With");
+//     res.header("Access-Control-Allow-Methods", "GET, PUT, POST");
+//     if ('OPTIONS' === req.method) {
+//         res.status(204).send();
+//     }
+//     else {
+//         next();
+//     }
+// });
+
 io.on('connection', function(socket) {
 
     clients[socket.id] = socket;
@@ -97,12 +123,65 @@ io.on('connection', function(socket) {
         done();
     });
 
-    // @todo - verificar se socket.id ao cair mantem o id
     socket.on('disconnect', function() {
 
+        console.log('a user disconnect', playersByClient[socket.id], Object.keys(clients).length, socket.id); 
+
+        var playerId = playersByClient[socket.id];
+
+        for (var i = 0, len = rooms.length; i < len; i++) {
+
+            var room = rooms[i];
+
+            if (!room) {
+                continue;
+            }
+
+            var p1 = room.players[0];
+            var p2 = room.players[1];
+
+            if (p1.id == playerId) {
+                if (p2) {
+                    var p2Client = clients[clientsByPlayer[p2.id]];
+                    
+                    if (p2Client) {
+                        p2Client.emit('host-close-room');
+                    }
+                }
+                removeRoom(room.id);
+                break;
+            }
+
+            if (p2 && p2.id == playerId) {
+                room.players.pop();
+                var p1Client = clients[clientsByPlayer[p1.id]];
+                if (p1Client) {
+                    p1Client.emit('player-leave-room', room);
+                }
+                break;
+            } 
+        }
+
+        delete clientsByPlayer[playerId];
+        delete playersByClient[socket.id];
+        delete clients[socket.id];
+
+        if (playersAttempts[playerId]) {
+            clearTimeout(playersAttempts[playerId]);
+        }
+        playersAttempts[playerId] = setTimeout(function() {
+            PlayerDataQueue.clear(playerId);
+        }, 300000); // 5min
     });
 
     socket.on('join', function(data, done) {
+
+        console.log('join', data);
+
+        // @todo - pensar em algo
+        // if (clientsByPlayer[playerId]) {
+            // return done('Nickname '+ playerId +' is already taken');
+        // }
 
         clients[socket.id] = socket;
         clientsByPlayer[data.playerID] = socket.id;

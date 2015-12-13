@@ -14,20 +14,69 @@ Room.prototype = {
 
         if (!BubbleShooter.server) {
             BubbleShooter.server = new Server();
+            console.log('create server');
         }
+    
+        var _this = this;
+
+        var backButton = this.createButton('back', {position: {x : 66, y: 35}, callback: this.back, context: this});
+
+        var statusText = this.statusText = this.game.add.bitmapText(this.game.world.centerX, this.game.world.centerY, 'font', 'Connecting...', 18);
+        statusText.anchor.setTo(0.5);
 
         BubbleShooter.server.connect(function(error) {
 
-            this.createButton('back', {position: {x : 66, y: 35}, callback: this.back, context: this});
+            if (error) {
+                console.error(error);
+                return statusText.setText(error);
+            }
+
+            _this.getTotalPlayersOnline();
+            _this.findOpponent();
+        });
+
+        // setTimeout(function() {
+        //     statusText.setText('find opponent...');
+        // }, 1500);
+        //
+        // setTimeout(function() {
+        //     statusText.setText('wait player...');
+        // }, 2500);
+        //
+        // setTimeout(function() {
+        //     statusText.setText('game starting in: 5');
+        // }, 4000);
+        // setTimeout(function() {
+        //     statusText.setText('game starting in: 4');
+        // }, 5000);
+        // setTimeout(function() {
+        //     statusText.setText('game starting in: 3');
+        // }, 6000);
+        // setTimeout(function() {
+        //     statusText.setText('game starting in: 2');
+        // }, 7000);
+        // setTimeout(function() {
+        //     statusText.setText('game starting in: 1');
+        // }, 8000);
+        // setTimeout(function() {
+        //     backButton.destroy();
+        //     playerText.destroy();
+        //     statusText.setText('loading...');
+        // }.bind(this), 9000);
+
+
+        return;
+
+        BubbleShooter.server.connect(function(error) {
 
             if (error) {
                 return this.createLabel('error connecting to the server', {position: {x: 20, y: 80}});
             }
 
+            BubbleShooter.server.removeAllListeners();
+
             this.createLabel('Select room', { position: {x : 10, y: 70}});
             this.createButton('Create room', {position: {x : 442, y: 35}, callback: this.createRoom, context: this});
-
-            BubbleShooter.server.removeAllListeners();
 
             // notify
             BubbleShooter.server.once('create-room', function() {
@@ -39,6 +88,16 @@ Room.prototype = {
             this.createListRooms(); 
 
         }.bind(this));
+    },
+
+    findOpponent: function() 
+    {
+        this.statusText.setText('find opponent...');
+    },
+
+    getTotalPlayersOnline: function() 
+    {
+        var playerText = this.game.add.bitmapText(10, 70, 'font', 'Players online: 26', 20);
     },
 
     createLabel: function(text, data)
@@ -112,8 +171,7 @@ Room.prototype = {
 
     back: function()
     {
-        if (BubbleShooter.joinServer) {
-            BubbleShooter.joinServer = false;
+        if (BubbleShooter.server.connected()) {
             BubbleShooter.server.disconnect();
         }
         this.state.start('menu');

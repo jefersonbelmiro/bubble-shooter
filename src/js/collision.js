@@ -7,7 +7,7 @@ var Collision = {
         bubbleRadius : UI.bubble.radius,
         trajectory : {
             distance : UI.bubble.radius/5,
-            duration : 600,
+            speed : 1000,
         } 
     },
 
@@ -136,7 +136,7 @@ var Collision = {
             var distToCollision = stepIteration * Collision.config.trajectory.distance;
             // var duration = Math.round( Collision.config.trajectory.duration * distToCollision / 1000);
 
-            var speed = 1500;
+            var speed = Collision.config.trajectory.speed;
             var delta = 1000;
             var duration = Math.round(distToCollision / speed * delta);
 
@@ -161,6 +161,8 @@ var Collision = {
 
         var position = { x: bubble.x, y: bubble.y };
         var safeLimit = 2000;
+
+        // problems? http://stackoverflow.com/questions/10387100/2d-projectile-trajectory
         var dx = Math.sin(angle) * Collision.config.trajectory.distance;
         var dy = Math.cos(angle) * Collision.config.trajectory.distance;
 

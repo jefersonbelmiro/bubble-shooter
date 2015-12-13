@@ -52,13 +52,16 @@ function createRect(width, height, color)
 
 function createButton(data) 
 {
-    var textPlay = BubbleShooter.game.add.bitmapText(0, 0, 'font', data.label, data.fontSize || 30);
+    var fontName = 'dunkin';
+    var backgroundColor = '#444';
+
+    var textPlay = BubbleShooter.game.add.bitmapText(0, 0, 'dunkin', data.label, data.fontSize || 30);
     textPlay.anchor.setTo(0.5);
     textPlay.alpha = data.alpha || 0.7;
 
     var rect = BubbleShooter.game.add.sprite(
         data.position.x, data.position.y,
-        createRect(textPlay.width + 25, textPlay.height + 18, data.background || '#444')
+        createRect(textPlay.width + 25, textPlay.height + 18, data.background || backgroundColor)
     );
     rect.anchor.setTo(0.5);
     rect.addChild(textPlay);

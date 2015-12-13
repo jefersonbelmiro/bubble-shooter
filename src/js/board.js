@@ -80,6 +80,7 @@ Board.prototype = {
 
             // fix shooter position
             this.player.shooter.y = this.y + this.height - this.player.shooter.y;
+            this.player.shooter.hand.y = this.player.shooter.y;
 
             var limitLine = BubbleShooter.entities.create(
                 this.x, this.player.shooter.y - this.player.shooter.height/2, 

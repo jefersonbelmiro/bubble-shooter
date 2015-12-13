@@ -2,8 +2,6 @@ var BubbleShooter = require('./bubble-shooter.js');
 var Utils = require('./utils.js');
 var UI = require('./ui.js');
 
-var spriteNames = ['green', 'blue', 'yellow', 'red', 'magenta', 'orange'];
-
 function Bubble(player, row, col, spriteName)
 {
     Phaser.Sprite.call(this, BubbleShooter.game, 0, 0, 'sprites', spriteName || Bubble.getRandomSprite());
@@ -174,7 +172,7 @@ Bubble.prototype.createDebugText = function()
     }
 
     if (!this.debugText) {
-        var style = { font: "50px Arial", fill: "#000" };  
+        var style = { font: "20px Arial", fill: "#000" };  
         var text = BubbleShooter.game.add.text(0, 0, '', style);
         text.anchor.setTo(0.5);
         this.addChild(text);
@@ -201,6 +199,7 @@ Bubble.create = function(player, row, col, spriteName)
         bubble.tag = spriteName;
         bubble.scale.setTo(UI.bubble.scale);
         bubble.player = player;
+        bubble.visible = true;
     }
 
     if (!bubble) {
@@ -212,9 +211,11 @@ Bubble.create = function(player, row, col, spriteName)
     return bubble;
 }
 
+Bubble.TAGS = ['green', 'blue', 'yellow', 'red', 'magenta', 'orange'];
+
 Bubble.getRandomSprite = function()
 {
-    return spriteNames[Utils.getRandomInt(0, spriteNames.length - 1)];
+    return Bubble.TAGS[Utils.getRandomInt(0, Bubble.TAGS.length - 1)];
 } 
 
 module.exports = Bubble;
